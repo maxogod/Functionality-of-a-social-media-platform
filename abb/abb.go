@@ -1,12 +1,15 @@
 package diccionario
 
-import dic "diccionario/TP2/hash"
+import (
+	"diccionario/TP2/errores"
+	dic "diccionario/TP2/hash"
+)
 
 type nodoAbb[K comparable, V any] struct {
 	izquierdo *nodoAbb[K, V]
 	derecho   *nodoAbb[K, V]
 	clave     K
-	dato      V
+	valor     V
 }
 
 type abb[K comparable, V any] struct {
@@ -15,54 +18,60 @@ type abb[K comparable, V any] struct {
 	cmp      func(K, K) int
 }
 
-func (a abb[K, V]) Guardar(clave K, dato V) {
-	//TODO implement me
-	panic("implement me")
+func (a *abb[K, V]) Guardar(clave K, valor V) {
+	nuevoNodo := &nodoAbb[K, V]{clave: clave, valor: valor}
+	a.guardarEntreNodos(a.raiz, nuevoNodo)
+}
+
+// guardarEntreNodos Guarda el nuevo nodo en su correspondiente lugar usando recursividad.
+func (a *abb[K, V]) guardarEntreNodos(nodoPadre, nuevoNodo *nodoAbb[K, V]) {
+	if nodoPadre == nil || nodoPadre.clave == nuevoNodo.clave {
+		nodoPadre = nuevoNodo // Si esta vacio O si hay que actualizarlo
+	} else if a.cmp(nuevoNodo.clave, nodoPadre.clave) < 0 {
+		// Mover a Izq
+		a.guardarEntreNodos(nodoPadre.izquierdo, nuevoNodo)
+	} else if a.cmp(nuevoNodo.clave, nodoPadre.clave) > 0 {
+		// Mover a Der
+		a.guardarEntreNodos(nodoPadre.derecho, nuevoNodo)
+	}
 }
 
 func (a abb[K, V]) Pertenece(clave K) bool {
-	//TODO implement me
-	panic("implement me")
+	_, err := a.obtenerEntreNodos(a.raiz, clave)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func (a abb[K, V]) Obtener(clave K) V {
-	//Si el arbol esta vacio, tira error
-	if a.Cantidad() == 0 {
-		error()
-	} else if a.cmp(a.raiz.clave, clave) == 0 { //si el dato esta en la raiz, devolvemos la raiz
-		return a.raiz.dato
-	} else if a.cmp(clave, a.raiz.clave) > 0 && a.raiz.derecho != nil { //si la clave es mayor que el nodo raiz, nos movemos a la derecha del arbol y tambien debe EXISTIR un nodo a la derecha
+
+	valor, _ := a.obtenerEntreNodos(a.raiz, clave)
+	return valor
+}
+
+/*
+Comparamos cada uno de los nodos del arbol, comenzando en la raiz obviamente
+si la clave es mayor que la clave del nodo actual y tambien que EXISTA un nodo derecho, nos movemos a la derecha,
+si es menor y existe un nodo a la izquierda nos movemos a la izquierda
+en caso de no cumplir nada de lo previamente mencionado, tira error
+tambien tira error cuando el arbol está vacia
+*/
+func (a abb[K, V]) obtenerEntreNodos(nodoPadre *nodoAbb[K, V], clave K) (V, error) {
+	if nodoPadre == nil {
+		return nil, new(errores.ErrorNoEncontrado)
+	} else if a.cmp(nodoPadre.clave, clave) == 0 {
+		return nodoPadre.valor, nil
+	} else if a.cmp(clave, nodoPadre.clave) > 0 {
 		//muevo Der
-		return a.raiz.derecho.obtenerEntreNodos(a.cmp, clave)
-
-	} else if a.cmp(clave, a.raiz.clave) < 0 && a.raiz.izquierdo != nil { //si la clave es menor que el nodo raiz, nos movemos a la izquierda del arbol y tambien debe EXISTIR un nodo a la izquierda
+		return a.obtenerEntreNodos(nodoPadre.derecho, clave)
+	} else if a.cmp(clave, nodoPadre.clave) < 0 {
 		//muevo Izq
-		return a.raiz.izquierdo.obtenerEntreNodos(a.cmp, clave)
-
+		a.raiz = a.raiz.izquierdo
+		return a.obtenerEntreNodos(nodoPadre.izquierdo, clave)
 	}
 	//en caso de no cumplir nada de lo previamente mencionado, tira error
-	error()
-	return nil
-}
-
-func (n nodoAbb[K, V]) obtenerEntreNodos(cmp func(K, K) int, clave K) V {
-	if cmp(n.clave, clave) == 0 { //si la clave del nodo actual es igual a la clave en cuestion, nos devuelve el dato del nodo
-		return n.dato
-	} else if cmp(clave, n.clave) > 0 && n.derecho != nil { //comparamos y vemos de movernos al nodo a la derecha (en caso que exista un nodo a la derecha)
-		return n.derecho.obtenerEntreNodos(cmp, clave)
-
-	} else if cmp(clave, n.clave) < 0 && n.izquierdo != nil { //comparamos y vemos de movernos al nodo a la izquierda (en caso que exista un nodo a la izquierda)
-		//muevo Izq
-		return n.izquierdo.obtenerEntreNodos(cmp, clave)
-
-	}
-	//en caso de no cumplir nada de lo previamente mencionado, tira error
-	error()
-	return nil
-}
-
-func error() {
-	panic("dato no esta")
+	return nil, new(errores.ErrorNoEncontrado)
 }
 
 func (a abb[K, V]) Borrar(clave K) V {
