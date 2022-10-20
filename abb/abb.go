@@ -89,9 +89,6 @@ func (a abb[K, V]) buscarEntreNodos(nodoPadre *nodoAbb[K, V], clave K) (*nodoAbb
 }
 
 func (a *abb[K, V]) Borrar(clave K) V {
-	if a.raiz.clave == clave {
-		a.raiz = nil // TODO poner el hijo
-	}
 	nodoBuscado, err := a.buscarEntreNodos(a.raiz, clave)
 	if err != nil {
 		panic(err.Error())
@@ -116,7 +113,7 @@ func (a *abb[K, V]) Borrar(clave K) V {
 func (a *abb[K, V]) borrarNodoSinHijos(nodoBuscado *nodoAbb[K, V]) {
 	if nodoBuscado.padre == nil {
 		// Caso borde raiz
-		nodoBuscado = nil
+		a.raiz = nil
 	} else if a.cmp(nodoBuscado.clave, nodoBuscado.padre.clave) > 0 {
 		nodoBuscado.padre.derecho = nil
 	} else {
@@ -133,7 +130,7 @@ func (a *abb[K, V]) borrarNodoUnHijo(nodoBuscado *nodoAbb[K, V]) {
 	}
 	if nodoBuscado.padre == nil {
 		// Caso borde raiz
-		nodoBuscado = hijo
+		a.raiz = hijo
 		hijo.padre = nil
 	} else if a.cmp(nodoBuscado.clave, nodoBuscado.padre.clave) > 0 {
 		nodoBuscado.padre.derecho = hijo
@@ -146,8 +143,14 @@ func (a *abb[K, V]) borrarNodoUnHijo(nodoBuscado *nodoAbb[K, V]) {
 func (a *abb[K, V]) borrarNodoDosHijos(nodoBuscado *nodoAbb[K, V]) {
 	//buscamos el nodo que remplaza al nodo borrado
 	nodoRemplazo := a.buscarRemplazo(nodoBuscado.izquierdo)
-
-	nodoRemplazo.padre.derecho = nodoRemplazo.izquierdo
+	if nodoBuscado.padre == nil {
+		// Caso borde raiz
+		nodoRemplazo.derecho = a.raiz.derecho
+		nodoRemplazo.padre = nil
+		a.raiz = nodoRemplazo
+	} else {
+		nodoRemplazo.padre.derecho = nodoRemplazo.izquierdo
+	}
 	if nodoRemplazo.izquierdo != nil {
 		//antes de remplazar el nodo, en caso que el remplazo tenga hijo izq
 		nodoRemplazo.izquierdo.padre = nodoRemplazo.padre

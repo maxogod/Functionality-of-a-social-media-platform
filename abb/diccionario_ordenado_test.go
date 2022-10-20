@@ -39,4 +39,8 @@ func TestAthus(t *testing.T) {
 		return 0
 	})
 	abb.Guardar(1, 1)
+	abb.Guardar(3, 3)
+	abb.Guardar(2, 2)
+	abb.Guardar(4, 4)
+	abb.Borrar(3)
 }
