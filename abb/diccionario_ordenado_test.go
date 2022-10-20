@@ -42,5 +42,5 @@ func TestAthus(t *testing.T) {
 	abb.Guardar(3, 3)
 	abb.Guardar(2, 2)
 	abb.Guardar(4, 4)
-	abb.Borrar(3)
+	abb.Borrar(1)
 }

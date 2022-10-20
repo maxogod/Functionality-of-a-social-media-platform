@@ -19,6 +19,8 @@ type abb[K comparable, V any] struct {
 	cmp      func(K, K) int
 }
 
+// Primitivas del Arbol
+
 func (a *abb[K, V]) Guardar(clave K, valor V) {
 	nuevoNodo := &nodoAbb[K, V]{clave: clave, valor: valor}
 	if a.raiz == nil {
@@ -46,9 +48,7 @@ func (a *abb[K, V]) guardarEntreNodos(nodoPadre, nuevoNodo *nodoAbb[K, V]) {
 		} else {
 			a.guardarEntreNodos(nodoPadre.izquierdo, nuevoNodo)
 		}
-	}
-
-	if a.cmp(nuevoNodo.clave, nodoPadre.clave) > 0 {
+	} else if a.cmp(nuevoNodo.clave, nodoPadre.clave) > 0 {
 		// Mover a Der
 		if nodoPadre.derecho == nil || nodoPadre.derecho.clave == nuevoNodo.clave {
 			// Guardar
@@ -79,22 +79,6 @@ func (a abb[K, V]) Obtener(clave K) V {
 	return nodoBuscado.valor
 }
 
-// buscarEntreNodos Busca el nodo por clave, comenzando en la raiz
-// si la clave es mayor que la clave del nodo actual, busca en la derecha, sino en la izquierda.
-// retorna (nodoBuscado, nil) si lo encuentra, sino (nil, errorNoEncontrado).
-func (a abb[K, V]) buscarEntreNodos(nodoPadre *nodoAbb[K, V], clave K) (*nodoAbb[K, V], error) {
-	if nodoPadre == nil {
-		return nil, new(errores.ErrorNoEncontrado)
-	} else if a.cmp(clave, nodoPadre.clave) > 0 {
-		//muevo Der
-		return a.buscarEntreNodos(nodoPadre.derecho, clave)
-	} else if a.cmp(clave, nodoPadre.clave) < 0 {
-		//muevo Izq
-		return a.buscarEntreNodos(nodoPadre.izquierdo, clave)
-	}
-	return nodoPadre, nil
-}
-
 func (a *abb[K, V]) Borrar(clave K) V {
 	nodoBuscado, err := a.buscarEntreNodos(a.raiz, clave)
 	if err != nil {
@@ -122,8 +106,10 @@ func (a *abb[K, V]) borrarNodoSinHijos(nodoBuscado *nodoAbb[K, V]) {
 		// Caso borde raiz
 		a.raiz = nil
 	} else if a.cmp(nodoBuscado.clave, nodoBuscado.padre.clave) > 0 {
+		// Es hijo der de su padre
 		nodoBuscado.padre.derecho = nil
 	} else {
+		// Es hijo izq de su padre
 		nodoBuscado.padre.izquierdo = nil
 	}
 }
@@ -135,13 +121,16 @@ func (a *abb[K, V]) borrarNodoUnHijo(nodoBuscado *nodoAbb[K, V]) {
 	} else {
 		hijo = nodoBuscado.derecho
 	}
+
 	if nodoBuscado.padre == nil {
 		// Caso borde raiz
 		a.raiz = hijo
 		hijo.padre = nil
 	} else if a.cmp(nodoBuscado.clave, nodoBuscado.padre.clave) > 0 {
+		// Es hijo der de su padre
 		nodoBuscado.padre.derecho = hijo
 	} else {
+		// Es hijo izq de su padre
 		nodoBuscado.padre.izquierdo = hijo
 	}
 	hijo.padre = nodoBuscado.padre
@@ -150,19 +139,10 @@ func (a *abb[K, V]) borrarNodoUnHijo(nodoBuscado *nodoAbb[K, V]) {
 func (a *abb[K, V]) borrarNodoDosHijos(nodoBuscado *nodoAbb[K, V]) {
 	//buscamos el nodo que remplaza al nodo borrado
 	nodoRemplazo := a.buscarRemplazo(nodoBuscado.izquierdo)
-	if nodoBuscado.padre == nil {
-		// Caso borde raiz
-		nodoRemplazo.derecho = a.raiz.derecho
-		nodoRemplazo.padre = nil
-		a.raiz = nodoRemplazo
-	} else {
-		nodoRemplazo.padre.derecho = nodoRemplazo.izquierdo
-	}
-	if nodoRemplazo.izquierdo != nil {
-		//antes de remplazar el nodo, en caso que el remplazo tenga hijo izq
-		nodoRemplazo.izquierdo.padre = nodoRemplazo.padre
-	}
-	nodoBuscado.clave, nodoBuscado.valor = nodoRemplazo.clave, nodoRemplazo.valor
+
+	clave := nodoRemplazo.clave
+	valor := a.Borrar(clave)
+	nodoBuscado.clave, nodoBuscado.valor = clave, valor
 }
 
 func (a abb[K, V]) buscarRemplazo(nodoRemplazo *nodoAbb[K, V]) *nodoAbb[K, V] {
@@ -170,6 +150,22 @@ func (a abb[K, V]) buscarRemplazo(nodoRemplazo *nodoAbb[K, V]) *nodoAbb[K, V] {
 		return nodoRemplazo
 	}
 	return a.buscarRemplazo(nodoRemplazo.derecho)
+}
+
+// buscarEntreNodos Busca el nodo por clave, comenzando en la raiz
+// si la clave es mayor que la clave del nodo actual, busca en la derecha, sino en la izquierda.
+// retorna (nodoBuscado, nil) si lo encuentra, sino (nil, errorNoEncontrado).
+func (a abb[K, V]) buscarEntreNodos(nodoPadre *nodoAbb[K, V], clave K) (*nodoAbb[K, V], error) {
+	if nodoPadre == nil {
+		return nil, new(errores.ErrorNoEncontrado)
+	} else if a.cmp(clave, nodoPadre.clave) > 0 {
+		//muevo Der
+		return a.buscarEntreNodos(nodoPadre.derecho, clave)
+	} else if a.cmp(clave, nodoPadre.clave) < 0 {
+		//muevo Izq
+		return a.buscarEntreNodos(nodoPadre.izquierdo, clave)
+	}
+	return nodoPadre, nil
 }
 
 func (a abb[K, V]) Cantidad() int {
@@ -195,6 +191,12 @@ func (a abb[K, V]) IteradorRango(desde *K, hasta *K) dic.IterDiccionario[K, V] {
 	//TODO implement me
 	panic("implement me")
 }
+
+// Primitivas Iter extenos
+
+// TODO implement
+
+// Funcion Creacion
 
 func CrearABB[K comparable, V any](funcionCmp func(K, K) int) DiccionarioOrdenado[K, V] {
 	a := new(abb[K, V])
