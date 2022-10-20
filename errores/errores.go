@@ -3,5 +3,5 @@ package errores
 type ErrorNoEncontrado struct{}
 
 func (e ErrorNoEncontrado) Error() string {
-	return "ERROR: Lectura de archivos"
+	return "La clave no pertenece al diccionario"
 }
