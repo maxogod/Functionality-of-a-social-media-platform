@@ -75,7 +75,7 @@ func (a abb[K, V]) Obtener(clave K) V {
 //sino, nos movemos a la izquierda
 //en caso de no cumplir nada de lo previamente mencionado, devuelve error
 //tambien devuelve error cuando el arbol está vacio
-func (a *abb[K, V]) buscarEntreNodos(nodoPadre *nodoAbb[K, V], clave K) (*nodoAbb[K, V], error) {
+func (a abb[K, V]) buscarEntreNodos(nodoPadre *nodoAbb[K, V], clave K) (*nodoAbb[K, V], error) {
 	if nodoPadre == nil {
 		return nil, new(errores.ErrorNoEncontrado)
 	} else if a.cmp(clave, nodoPadre.clave) > 0 {
@@ -114,7 +114,10 @@ func (a *abb[K, V]) Borrar(clave K) V {
 }
 
 func (a *abb[K, V]) borrarNodoSinHijos(nodoBuscado *nodoAbb[K, V]) {
-	if a.cmp(nodoBuscado.clave, nodoBuscado.padre.clave) > 0 {
+	if nodoBuscado.padre == nil {
+		// Caso borde raiz
+		nodoBuscado = nil
+	} else if a.cmp(nodoBuscado.clave, nodoBuscado.padre.clave) > 0 {
 		nodoBuscado.padre.derecho = nil
 	} else {
 		nodoBuscado.padre.izquierdo = nil
@@ -128,15 +131,35 @@ func (a *abb[K, V]) borrarNodoUnHijo(nodoBuscado *nodoAbb[K, V]) {
 	} else {
 		hijo = nodoBuscado.derecho
 	}
-	if a.cmp(nodoBuscado.clave, nodoBuscado.padre.clave) > 0 {
+	if nodoBuscado.padre == nil {
+		// Caso borde raiz
+		nodoBuscado = hijo
+		hijo.padre = nil
+	} else if a.cmp(nodoBuscado.clave, nodoBuscado.padre.clave) > 0 {
 		nodoBuscado.padre.derecho = hijo
 	} else {
 		nodoBuscado.padre.izquierdo = hijo
 	}
+	hijo.padre = nodoBuscado.padre
 }
 
 func (a *abb[K, V]) borrarNodoDosHijos(nodoBuscado *nodoAbb[K, V]) {
-	panic("Implement me")
+	//buscamos el nodo que remplaza al nodo borrado
+	nodoRemplazo := a.buscarRemplazo(nodoBuscado.izquierdo)
+
+	nodoRemplazo.padre.derecho = nodoRemplazo.izquierdo
+	if nodoRemplazo.izquierdo != nil {
+		//antes de remplazar el nodo, en caso que el remplazo tenga hijo izq
+		nodoRemplazo.izquierdo.padre = nodoRemplazo.padre
+	}
+	nodoBuscado.clave, nodoBuscado.valor = nodoRemplazo.clave, nodoRemplazo.valor
+}
+
+func (a abb[K, V]) buscarRemplazo(nodoRemplazo *nodoAbb[K, V]) *nodoAbb[K, V] {
+	if nodoRemplazo.derecho == nil {
+		return nodoRemplazo
+	}
+	return a.buscarRemplazo(nodoRemplazo.derecho)
 }
 
 func (a abb[K, V]) Cantidad() int {

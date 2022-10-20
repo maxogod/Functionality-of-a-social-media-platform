@@ -28,3 +28,15 @@ func TestAbb_Guardar(t *testing.T) {
 	abb.Guardar(5, 2)
 	require.EqualValues(t, 2, abb.Borrar(3))
 }
+
+func TestAthus(t *testing.T) {
+	abb := dic.CrearABB[int, int](func(x int, y int) int {
+		if x > y {
+			return 1
+		} else if x < y {
+			return -1
+		}
+		return 0
+	})
+	abb.Guardar(1, 1)
+}
