@@ -21,33 +21,42 @@ type abb[K comparable, V any] struct {
 
 func (a *abb[K, V]) Guardar(clave K, valor V) {
 	nuevoNodo := &nodoAbb[K, V]{clave: clave, valor: valor}
-	a.guardarEntreNodos(a.raiz, nuevoNodo)
+	if a.raiz == nil {
+		a.raiz = nuevoNodo // Guardar raiz
+	} else if a.raiz.clave == nuevoNodo.clave {
+		a.raiz.valor = nuevoNodo.valor // Actualizar raiz
+	} else {
+		a.guardarEntreNodos(a.raiz, nuevoNodo)
+	}
 	a.cantidad++
 }
 
-// guardarEntreNodos Guarda el nuevo nodo en su correspondiente lugar usando recursividad.
+// guardarEntreNodos Guarda el nuevo nodo en su correspondiente lugar o lo actualiza recursivamente.
 func (a *abb[K, V]) guardarEntreNodos(nodoPadre, nuevoNodo *nodoAbb[K, V]) {
-	if a.raiz == nil {
-		a.raiz = nuevoNodo
-	} else if a.raiz.clave == nuevoNodo.clave {
-		a.raiz.valor = nuevoNodo.valor // actualizar raiz
-	} else if a.cmp(nuevoNodo.clave, nodoPadre.clave) < 0 {
+
+	if a.cmp(nuevoNodo.clave, nodoPadre.clave) < 0 {
 		// Mover a Izq
 		if nodoPadre.izquierdo == nil {
+			// Guardar
 			nuevoNodo.padre = nodoPadre
 			nodoPadre.izquierdo = nuevoNodo
 		} else if nodoPadre.izquierdo.clave == nuevoNodo.clave {
-			nodoPadre.izquierdo.valor = nuevoNodo.valor // actualizar valor
+			// Actualizar valor
+			nodoPadre.izquierdo.valor = nuevoNodo.valor
 		} else {
 			a.guardarEntreNodos(nodoPadre.izquierdo, nuevoNodo)
 		}
-	} else if a.cmp(nuevoNodo.clave, nodoPadre.clave) > 0 {
+	}
+
+	if a.cmp(nuevoNodo.clave, nodoPadre.clave) > 0 {
 		// Mover a Der
 		if nodoPadre.derecho == nil || nodoPadre.derecho.clave == nuevoNodo.clave {
+			// Guardar
 			nuevoNodo.padre = nodoPadre
 			nodoPadre.derecho = nuevoNodo
 		} else if nodoPadre.derecho.clave == nuevoNodo.clave {
-			nodoPadre.derecho.valor = nuevoNodo.valor // actualizar valor
+			// Actualizar valor
+			nodoPadre.derecho.valor = nuevoNodo.valor
 		} else {
 			a.guardarEntreNodos(nodoPadre.derecho, nuevoNodo)
 		}
@@ -70,11 +79,9 @@ func (a abb[K, V]) Obtener(clave K) V {
 	return nodoBuscado.valor
 }
 
-//Comparamos cada uno de los nodos del arbol, comenzando en la raiz
-//si la clave es mayor que la clave del nodo actual, nos movemos a la derecha,
-//sino, nos movemos a la izquierda
-//en caso de no cumplir nada de lo previamente mencionado, devuelve error
-//tambien devuelve error cuando el arbol está vacio
+// buscarEntreNodos Busca el nodo por clave, comenzando en la raiz
+// si la clave es mayor que la clave del nodo actual, busca en la derecha, sino en la izquierda.
+// retorna (nodoBuscado, nil) si lo encuentra, sino (nil, errorNoEncontrado).
 func (a abb[K, V]) buscarEntreNodos(nodoPadre *nodoAbb[K, V], clave K) (*nodoAbb[K, V], error) {
 	if nodoPadre == nil {
 		return nil, new(errores.ErrorNoEncontrado)
