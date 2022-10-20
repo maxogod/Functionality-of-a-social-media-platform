@@ -30,7 +30,6 @@ func (a *abb[K, V]) Guardar(clave K, valor V) {
 	} else {
 		a.guardarEntreNodos(a.raiz, nuevoNodo)
 	}
-	a.cantidad++
 }
 
 // guardarEntreNodos Guarda el nuevo nodo en su correspondiente lugar o lo actualiza recursivamente.
@@ -42,6 +41,7 @@ func (a *abb[K, V]) guardarEntreNodos(nodoPadre, nuevoNodo *nodoAbb[K, V]) {
 			// Guardar
 			nuevoNodo.padre = nodoPadre
 			nodoPadre.izquierdo = nuevoNodo
+			a.cantidad++
 		} else if nodoPadre.izquierdo.clave == nuevoNodo.clave {
 			// Actualizar valor
 			nodoPadre.izquierdo.valor = nuevoNodo.valor
@@ -50,10 +50,11 @@ func (a *abb[K, V]) guardarEntreNodos(nodoPadre, nuevoNodo *nodoAbb[K, V]) {
 		}
 	} else if a.cmp(nuevoNodo.clave, nodoPadre.clave) > 0 {
 		// Mover a Der
-		if nodoPadre.derecho == nil || nodoPadre.derecho.clave == nuevoNodo.clave {
+		if nodoPadre.derecho == nil {
 			// Guardar
 			nuevoNodo.padre = nodoPadre
 			nodoPadre.derecho = nuevoNodo
+			a.cantidad++
 		} else if nodoPadre.derecho.clave == nuevoNodo.clave {
 			// Actualizar valor
 			nodoPadre.derecho.valor = nuevoNodo.valor
