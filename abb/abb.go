@@ -25,12 +25,12 @@ func (a *abb[K, V]) Guardar(clave K, valor V) {
 	nuevoNodo := &nodoAbb[K, V]{clave: clave, valor: valor}
 	if a.raiz == nil {
 		a.raiz = nuevoNodo // Guardar raiz
+		a.cantidad++
 	} else if a.raiz.clave == nuevoNodo.clave {
 		a.raiz.valor = nuevoNodo.valor // Actualizar raiz
 	} else {
 		a.guardarEntreNodos(a.raiz, nuevoNodo)
 	}
-	a.cantidad++
 }
 
 // guardarEntreNodos Guarda el nuevo nodo en su correspondiente lugar o lo actualiza recursivamente.
@@ -42,6 +42,7 @@ func (a *abb[K, V]) guardarEntreNodos(nodoPadre, nuevoNodo *nodoAbb[K, V]) {
 			// Guardar
 			nuevoNodo.padre = nodoPadre
 			nodoPadre.izquierdo = nuevoNodo
+			a.cantidad++
 		} else if nodoPadre.izquierdo.clave == nuevoNodo.clave {
 			// Actualizar valor
 			nodoPadre.izquierdo.valor = nuevoNodo.valor
@@ -50,10 +51,11 @@ func (a *abb[K, V]) guardarEntreNodos(nodoPadre, nuevoNodo *nodoAbb[K, V]) {
 		}
 	} else if a.cmp(nuevoNodo.clave, nodoPadre.clave) > 0 {
 		// Mover a Der
-		if nodoPadre.derecho == nil || nodoPadre.derecho.clave == nuevoNodo.clave {
+		if nodoPadre.derecho == nil {
 			// Guardar
 			nuevoNodo.padre = nodoPadre
 			nodoPadre.derecho = nuevoNodo
+			a.cantidad++
 		} else if nodoPadre.derecho.clave == nuevoNodo.clave {
 			// Actualizar valor
 			nodoPadre.derecho.valor = nuevoNodo.valor
@@ -173,8 +175,19 @@ func (a abb[K, V]) Cantidad() int {
 }
 
 func (a abb[K, V]) Iterar(f func(clave K, dato V) bool) {
-	//TODO implement me
-	panic("implement me")
+	a.iterarEntreNodos(a.raiz, f)
+}
+
+func (a abb[K, V]) iterarEntreNodos(nodoActual *nodoAbb[K, V], f func(clave K, dato V) bool) {
+	// TODO funciona bien iterando el abb completo pero no corta bien cuando f == false.
+	if nodoActual == nil {
+		return
+	}
+	a.iterarEntreNodos(nodoActual.izquierdo, f)
+	if !f(nodoActual.clave, nodoActual.valor) {
+		return
+	}
+	a.iterarEntreNodos(nodoActual.derecho, f)
 }
 
 func (a abb[K, V]) Iterador() dic.IterDiccionario[K, V] {
