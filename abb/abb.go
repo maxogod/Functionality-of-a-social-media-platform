@@ -13,6 +13,12 @@ type nodoAbb[K comparable, V any] struct {
 	valor     V
 }
 
+type iterDic[K comparable, V any] struct {
+	raiz             *nodoAbb[K, V]
+	posicionActual   *nodoAbb[K, V]
+	posicionAnterior *nodoAbb[K, V]
+}
+
 type abb[K comparable, V any] struct {
 	raiz     *nodoAbb[K, V]
 	cantidad int
@@ -179,7 +185,6 @@ func (a abb[K, V]) Iterar(f func(clave K, dato V) bool) {
 }
 
 func (a abb[K, V]) iterarEntreNodos(nodoActual *nodoAbb[K, V], f func(clave K, dato V) bool) {
-	// TODO funciona bien iterando el abb completo pero no corta bien cuando f == false.
 	if nodoActual == nil {
 		return
 	}
@@ -190,14 +195,29 @@ func (a abb[K, V]) iterarEntreNodos(nodoActual *nodoAbb[K, V], f func(clave K, d
 	a.iterarEntreNodos(nodoActual.derecho, f)
 }
 
-func (a abb[K, V]) Iterador() dic.IterDiccionario[K, V] {
-	//TODO implement me
-	panic("implement me")
+func (a abb[K, V]) IterarRango(desde *K, hasta *K, visitar func(clave K, dato V) bool) {
+	if desde == nil && hasta == nil {
+		a.Iterar(visitar)
+		return
+	}
+	a.iterarRangoEntreNodos(a.raiz, desde, hasta, visitar)
 }
 
-func (a abb[K, V]) IterarRango(desde *K, hasta *K, visitar func(clave K, dato V) bool) {
-	//TODO implement me
-	panic("implement me")
+func (a abb[K, V]) iterarRangoEntreNodos(nodoActual *nodoAbb[K, V], desde *K, hasta *K, visitar func(clave K, dato V) bool) {
+	if nodoActual == nil {
+		return
+	}
+	a.iterarRangoEntreNodos(nodoActual.izquierdo, desde, hasta, visitar)              //partimos desde el mas chico
+	if a.cmp(*desde, nodoActual.clave) <= 0 && a.cmp(*hasta, nodoActual.clave) >= 0 { //izq	desde < nodo
+		if !visitar(nodoActual.clave, nodoActual.valor) {
+			return
+		}
+	}
+	a.iterarRangoEntreNodos(nodoActual.derecho, desde, hasta, visitar)
+}
+
+func (a abb[K, V]) Iterador() dic.IterDiccionario[K, V] {
+	return new(iterDic[K, V])
 }
 
 func (a abb[K, V]) IteradorRango(desde *K, hasta *K) dic.IterDiccionario[K, V] {
@@ -207,7 +227,20 @@ func (a abb[K, V]) IteradorRango(desde *K, hasta *K) dic.IterDiccionario[K, V] {
 
 // Primitivas Iter extenos
 
-// TODO implement
+func (i iterDic[K, V]) HaySiguiente() bool {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (i iterDic[K, V]) VerActual() (K, V) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (i iterDic[K, V]) Siguiente() K {
+	//TODO implement me
+	panic("implement me")
+}
 
 // Funcion Creacion
 

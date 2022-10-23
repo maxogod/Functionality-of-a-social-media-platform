@@ -107,6 +107,37 @@ func TestIter(t *testing.T) {
 	dic.Guardar("G", 7)
 	dic.Guardar("A", 1)
 	dic.Iterar(func(clave string, dato int) bool {
+		if strings.Compare(clave, "E") > 0 {
+			return false
+		}
+		fmt.Println(clave, dato)
+		return true
+	})
+}
+
+func TestIterRango(t *testing.T) {
+	//todo agregar require y las boludeses esas xD
+	t.Log("Guarda un par de claves, y luego vuelve a guardar, buscando que el dato se haya reemplazado")
+	dic := TDAdic.CrearABB[string, int](strings.Compare)
+	dic.Guardar("D", 4)
+	dic.Guardar("C", 3)
+	dic.Guardar("B", 2)
+	dic.Guardar("F", 6)
+	dic.Guardar("E", 5)
+	dic.Guardar("G", 7)
+	dic.Guardar("A", 1)
+	var desde = "B"
+	var hasta = "F"
+
+	dic.IterarRango(&desde, &hasta, func(clave string, dato int) bool {
+		fmt.Println(clave, dato)
+		return true
+	})
+
+	dic.IterarRango(&desde, &hasta, func(clave string, dato int) bool {
+		if strings.Compare(clave, "E") > 0 {
+			return false
+		}
 		fmt.Println(clave, dato)
 		return true
 	})
