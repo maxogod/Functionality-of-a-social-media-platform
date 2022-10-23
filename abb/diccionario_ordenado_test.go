@@ -141,17 +141,26 @@ func TestBorrar(t *testing.T) {
 func TestBorrarUnaHoja(t *testing.T) {
 	// TODO lo hace santeis
 	t.Log("Test borrar hoja de un arbol")
-	dic := TDAdic.CrearABB[string, string](strings.Compare)
-	clave1 := "Gato"
-	clave2 := "Perro"
-	clave3 := "Vaca"
-	valor1 := "miau"
-	valor2 := "guau"
-	valor3 := "moo"
+	dic := TDAdic.CrearABB[string, int](strings.Compare)
+	clave1 := "A"
+	clave2 := "B" // A borrar
+	clave3 := "C"
+	valor1 := 1
+	valor2 := 0 // A borrar
+	valor3 := 2
 	dic.Guardar(clave1, valor1)
 	dic.Guardar(clave2, valor2)
 	dic.Guardar(clave3, valor3)
 	dic.Borrar(clave3)
+	require.False(t, dic.Pertenece(clave3))
+
+	// Checkea que el arbol quedo como se supone
+	i := valor1
+	dic.Iterar(func(clave string, valor int) bool {
+		require.EqualValues(t, i, valor)
+		i++
+		return true
+	})
 
 }
 
@@ -162,17 +171,14 @@ func TestBorrarNodoConHijo(t *testing.T) {
 	clave1 := "A"
 	clave2 := "B" // A borrar
 	clave3 := "C"
-	clave4 := "D"
-	valor1 := 1
-	valor2 := 0 // A borrar
+	valor1 := 0
+	valor2 := 1 // A borrar
 	valor3 := 2
-	valor4 := 3
 	dic.Guardar(clave1, valor1)
 	dic.Guardar(clave2, valor2)
-	dic.Guardar(clave4, valor4)
 	dic.Guardar(clave3, valor3)
-	dic.Borrar(clave2)
-	require.False(t, dic.Pertenece(clave2))
+	dic.Borrar(clave3)
+	require.False(t, dic.Pertenece(clave3))
 
 	// Checkea que el arbol quedo como se supone
 	i := valor1
