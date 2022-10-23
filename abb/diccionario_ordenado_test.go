@@ -349,7 +349,7 @@ func TestIteradorRango(t *testing.T) {
 //	require.False(t, dic.Pertenece(a1))
 //	require.EqualValues(t, 2, dic.Obtener(a3))
 //}
-//
+
 //func TestClaveVacia(t *testing.T) {
 //	t.Log("Guardamos una clave vacía (i.e. \"\") y deberia funcionar sin problemas")
 //	dic := dic.CrearHash[string, string]()
@@ -371,30 +371,7 @@ func TestIteradorRango(t *testing.T) {
 //	require.EqualValues(t, (*int)(nil), dic.Borrar(clave))
 //	require.False(t, dic.Pertenece(clave))
 //}
-//
-//func TestCadenaLargaParticular(t *testing.T) {
-//	t.Log("Se han visto casos problematicos al utilizar la funcion de hashing de K&R, por lo que " +
-//		"se agrega una prueba con dicha funcion de hashing y una cadena muy larga")
-//	// El caracter '~' es el de mayor valor en ASCII (126).
-//	claves := make([]string, 10)
-//	cadena := "%d~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" +
-//		"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-//	dic := dic.CrearHash[string, string]()
-//	valores := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"}
-//	for i := 0; i < 10; i++ {
-//		claves[i] = fmt.Sprintf(cadena, i)
-//		dic.Guardar(claves[i], valores[i])
-//	}
-//	require.EqualValues(t, 10, dic.Cantidad())
-//
-//	ok := true
-//	for i := 0; i < 10 && ok; i++ {
-//		ok = dic.Obtener(claves[i]) == valores[i]
-//	}
-//
-//	require.True(t, ok, "Obtener clave larga funciona")
-//}
-//
+
 //func buscar(clave string, claves []string) int {
 //	for i, c := range claves {
 //		if c == clave {
@@ -403,7 +380,7 @@ func TestIteradorRango(t *testing.T) {
 //	}
 //	return -1
 //}
-//
+
 //func TestIteradorInternoClaves(t *testing.T) {
 //	t.Log("Valida que todas las claves sean recorridas (y una única vez) con el iterador interno")
 //	clave1 := "Gato"
@@ -433,7 +410,7 @@ func TestIteradorRango(t *testing.T) {
 //	require.NotEqualValues(t, cs[0], cs[2])
 //	require.NotEqualValues(t, cs[2], cs[1])
 //}
-//
+
 //func TestIteradorInternoValores(t *testing.T) {
 //	t.Log("Valida que los datos sean recorridas correctamente (y una única vez) con el iterador interno")
 //	clave1 := "Gato"
@@ -458,7 +435,7 @@ func TestIteradorRango(t *testing.T) {
 //
 //	require.EqualValues(t, 720, factorial)
 //}
-//
+
 //func ejecutarPruebaVolumen(b *testing.B, n int) {
 //	dic := dic.CrearHash[string, int]()
 //
@@ -501,7 +478,7 @@ func TestIteradorRango(t *testing.T) {
 //	require.True(b, ok, "Borrar muchos elementos no funciona correctamente")
 //	require.EqualValues(b, 0, dic.Cantidad())
 //}
-//
+
 //func BenchmarkDiccionario(b *testing.B) {
 //	b.Log("Prueba de stress del Diccionario. Prueba guardando distinta cantidad de elementos (muy grandes), " +
 //		"ejecutando muchas veces las pruebas para generar un benchmark. Valida que la cantidad " +
@@ -515,7 +492,7 @@ func TestIteradorRango(t *testing.T) {
 //		})
 //	}
 //}
-//
+
 //func TestIterarDiccionarioVacio(t *testing.T) {
 //	t.Log("Iterar sobre diccionario vacio es simplemente tenerlo al final")
 //	dic := dic.CrearHash[string, int]()
@@ -524,7 +501,7 @@ func TestIteradorRango(t *testing.T) {
 //	require.PanicsWithValue(t, "El iterador termino de iterar", func() { iter.VerActual() })
 //	require.PanicsWithValue(t, "El iterador termino de iterar", func() { iter.Siguiente() })
 //}
-//
+
 //func TestDiccionarioIterar(t *testing.T) {
 //	t.Log("Guardamos 3 valores en un Diccionario, e iteramos validando que las claves sean todas diferentes " +
 //		"pero pertenecientes al diccionario. Además los valores de VerActual y Siguiente van siendo correctos entre sí")
@@ -565,7 +542,7 @@ func TestIteradorRango(t *testing.T) {
 //	require.PanicsWithValue(t, "El iterador termino de iterar", func() { iter.VerActual() })
 //	require.PanicsWithValue(t, "El iterador termino de iterar", func() { iter.Siguiente() })
 //}
-//
+
 //func TestIteradorNoLlegaAlFinal(t *testing.T) {
 //	t.Log("Crea un iterador y no lo avanza. Luego crea otro iterador y lo avanza.")
 //	dic := dic.CrearHash[string, string]()
@@ -589,7 +566,7 @@ func TestIteradorRango(t *testing.T) {
 //	require.NotEqualValues(t, -1, buscar(segundo, claves))
 //	require.NotEqualValues(t, -1, buscar(tercero, claves))
 //}
-//
+
 //func TestPruebaIterarTrasBorrados(t *testing.T) {
 //	t.Log("Prueba de caja blanca: Esta prueba intenta verificar el comportamiento del hashMap abierto cuando " +
 //		"queda con listas vacías en su tabla. El iterador debería ignorar las listas vacías, avanzando hasta " +
@@ -621,7 +598,7 @@ func TestIteradorRango(t *testing.T) {
 //	require.EqualValues(t, clave1, iter.Siguiente())
 //	require.False(t, iter.HaySiguiente())
 //}
-//
+
 //func ejecutarPruebasVolumenIterador(b *testing.B, n int) {
 //	dic := dic.CrearHash[string, *int]()
 //
@@ -676,7 +653,7 @@ func TestIteradorRango(t *testing.T) {
 //	}
 //	require.True(b, ok, "No se cambiaron todos los elementos")
 //}
-//
+
 //func BenchmarkIterador(b *testing.B) {
 //	b.Log("Prueba de stress del Iterador del Diccionario. Prueba guardando distinta cantidad de elementos " +
 //		"(muy grandes) b.N elementos, iterarlos todos sin problemas. Se ejecuta cada prueba b.N veces para generar " +
