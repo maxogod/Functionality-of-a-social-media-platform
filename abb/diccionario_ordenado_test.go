@@ -139,15 +139,15 @@ func TestBorrar(t *testing.T) {
 }
 
 func TestBorrarUnaHoja(t *testing.T) {
-	t.Log("Guarda algunos pocos elementos en el diccionario, y se borra hojas del arbol revisando que en todo momento " +
-		"el diccionario se comporte de manera adecuada")
+	// TODO lo hace santeis
+	t.Log("Test borrar hoja de un arbol")
+	dic := TDAdic.CrearABB[string, string](strings.Compare)
 	clave1 := "Gato"
 	clave2 := "Perro"
 	clave3 := "Vaca"
 	valor1 := "miau"
 	valor2 := "guau"
 	valor3 := "moo"
-	dic := TDAdic.CrearABB[string, string](strings.Compare)
 	dic.Guardar(clave1, valor1)
 	dic.Guardar(clave2, valor2)
 	dic.Guardar(clave3, valor3)
@@ -156,15 +156,36 @@ func TestBorrarUnaHoja(t *testing.T) {
 }
 
 func TestBorrarNodoConHijo(t *testing.T) {
+	t.Log("Test borrar nodo con un hijo")
+	dic := TDAdic.CrearABB[string, int](strings.Compare)
 
+	clave1 := "A"
+	clave2 := "B" // A borrar
+	clave3 := "C"
+	clave4 := "D"
+	valor1 := 1
+	valor2 := 0 // A borrar
+	valor3 := 2
+	valor4 := 3
+	dic.Guardar(clave1, valor1)
+	dic.Guardar(clave2, valor2)
+	dic.Guardar(clave4, valor4)
+	dic.Guardar(clave3, valor3)
+	dic.Borrar(clave2)
+	require.False(t, dic.Pertenece(clave2))
+
+	// Checkea que el arbol quedo como se supone
+	i := valor1
+	dic.Iterar(func(clave string, valor int) bool {
+		require.EqualValues(t, i, valor)
+		i++
+		return true
+	})
 }
 
-func TestBorrarNodoConDosHijos(t *testing.T) {
-
-}
-
-func TestConClavesNumericas(t *testing.T) {
-	t.Log("Valida que no solo funcione con strings")
+func TestBorrarNodoDosHijos(t *testing.T) {
+	t.Log("Creamos un arbol con claves numericas donde la raiz tiene 2 hijos, y la borramos, despues se checkea que " +
+		"el arbol quedo como esperado.")
 	dic := TDAdic.CrearABB[int, string](func(x, y int) int {
 		if x < y {
 			return -1
