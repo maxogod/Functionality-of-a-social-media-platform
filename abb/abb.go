@@ -97,7 +97,6 @@ func (a *abb[K, V]) Borrar(clave K) V {
 
 	// Nodo existe y sera borrado
 	valor := nodoBuscado.valor
-	a.cantidad--
 	if nodoBuscado.izquierdo == nil && nodoBuscado.derecho == nil {
 		// Sin hijos
 		a.borrarNodoSinHijos(nodoBuscado)
@@ -112,6 +111,7 @@ func (a *abb[K, V]) Borrar(clave K) V {
 }
 
 func (a *abb[K, V]) borrarNodoSinHijos(nodoBuscado *nodoAbb[K, V]) {
+	a.cantidad--
 	if nodoBuscado.padre == nil {
 		// Caso borde raiz
 		a.raiz = nil
@@ -125,6 +125,7 @@ func (a *abb[K, V]) borrarNodoSinHijos(nodoBuscado *nodoAbb[K, V]) {
 }
 
 func (a *abb[K, V]) borrarNodoUnHijo(nodoBuscado *nodoAbb[K, V]) {
+	a.cantidad--
 	var hijo *nodoAbb[K, V]
 	if nodoBuscado.izquierdo != nil {
 		hijo = nodoBuscado.izquierdo

@@ -4,11 +4,10 @@ import (
 	TDAdic "diccionario/abb"
 	"diccionario/errores"
 	"github.com/stretchr/testify/require"
+	"math/rand"
 	"strings"
 	"testing"
 )
-
-var TAMS_VOLUMEN = []int{12500, 25000, 50000, 100000, 200000, 400000}
 
 func TestABBVacio(t *testing.T) {
 	t.Log("Comprueba que Diccionario vacio no tiene claves")
@@ -139,7 +138,6 @@ func TestBorrar(t *testing.T) {
 }
 
 func TestBorrarUnaHoja(t *testing.T) {
-	// TODO lo hace santeis
 	t.Log("Test borrar hoja de un arbol")
 	dic := TDAdic.CrearABB[string, int](strings.Compare)
 	clave1 := "A"
@@ -420,5 +418,29 @@ func TestIteradorRango(t *testing.T) {
 	}
 	require.False(t, iter.HaySiguiente())
 	require.PanicsWithValue(t, errores.ErrorIterTermino{}.Error(), func() { iter.Siguiente() })
+}
 
+func TestVolumen(t *testing.T) {
+	t.Log("Pruebas con un gran volumen de datos")
+	dic := TDAdic.CrearABB[int, int](func(x, y int) int {
+		if x < y {
+			return -1
+		} else if x > y {
+			return 1
+		}
+		return 0
+	})
+
+	min := 0
+	max := 1001
+	for i := 0; i < 1000; i++ {
+		random := rand.Intn(max-min) + min
+		dic.Guardar(random, random)
+	}
+	dic.Guardar(500, 500)
+	require.True(t, dic.Pertenece(500))
+	require.EqualValues(t, 1001, dic.Cantidad())
+	dic.Iterar(func(clave, valor int) bool {
+		return true
+	})
 }
