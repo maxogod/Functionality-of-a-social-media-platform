@@ -3,6 +3,7 @@ package diccionario
 import (
 	"diccionario/errores"
 	dic "diccionario/hash"
+	"diccionario/pila"
 )
 
 type nodoAbb[K comparable, V any] struct {
@@ -14,9 +15,7 @@ type nodoAbb[K comparable, V any] struct {
 }
 
 type iterDic[K comparable, V any] struct {
-	raiz             *nodoAbb[K, V]
-	posicionActual   *nodoAbb[K, V]
-	posicionAnterior *nodoAbb[K, V]
+	arbolApilado pila.Pila[*nodoAbb[K, V]]
 }
 
 type abb[K comparable, V any] struct {
@@ -217,7 +216,10 @@ func (a abb[K, V]) iterarRangoEntreNodos(nodoActual *nodoAbb[K, V], desde *K, ha
 }
 
 func (a abb[K, V]) Iterador() dic.IterDiccionario[K, V] {
-	return new(iterDic[K, V])
+	i := new(iterDic[K, V])
+	i.arbolApilado = pila.CrearPilaDinamica[*nodoAbb[K, V]]()
+	i.prellenarPila(a.raiz)
+	return i
 }
 
 func (a abb[K, V]) IteradorRango(desde *K, hasta *K) dic.IterDiccionario[K, V] {
@@ -227,19 +229,27 @@ func (a abb[K, V]) IteradorRango(desde *K, hasta *K) dic.IterDiccionario[K, V] {
 
 // Primitivas Iter extenos
 
+// prellenarPila apila el nodo Actual junto con todos sus hijos izquierdos.
+func (i *iterDic[K, V]) prellenarPila(nodoActual *nodoAbb[K, V]) {
+	if nodoActual == nil {
+		return
+	}
+	i.arbolApilado.Apilar(nodoActual)
+	i.prellenarPila(nodoActual.izquierdo)
+}
+
 func (i iterDic[K, V]) HaySiguiente() bool {
-	//TODO implement me
-	panic("implement me")
+	return i.arbolApilado.VerTope() != nil
 }
 
 func (i iterDic[K, V]) VerActual() (K, V) {
-	//TODO implement me
-	panic("implement me")
+	return i.arbolApilado.VerTope().clave, i.arbolApilado.VerTope().valor
 }
 
 func (i iterDic[K, V]) Siguiente() K {
-	//TODO implement me
-	panic("implement me")
+	elem := i.arbolApilado.Desapilar()
+	i.prellenarPila(elem.derecho)
+	return elem.clave
 }
 
 // Funcion Creacion
