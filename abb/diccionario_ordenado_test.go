@@ -2,7 +2,7 @@ package diccionario_test
 
 import (
 	TDAdic "diccionario/abb"
-	"fmt"
+	"diccionario/errores"
 	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
@@ -96,8 +96,87 @@ func TestReemplazoDato(t *testing.T) {
 	require.EqualValues(t, "baubau", dic.Obtener(clave2))
 }
 
+func TestDiccionarioBorrar(t *testing.T) {
+	t.Log("Guarda algunos pocos elementos en el diccionario, y se los borra, revisando que en todo momento " +
+		"el diccionario se comporte de manera adecuada")
+	clave1 := "Gato"
+	clave2 := "Perro"
+	clave3 := "Vaca"
+	valor1 := "miau"
+	valor2 := "guau"
+	valor3 := "moo"
+	claves := []string{clave1, clave2, clave3}
+	valores := []string{valor1, valor2, valor3}
+	dic := TDAdic.CrearABB[string, string](strings.Compare)
+
+	require.False(t, dic.Pertenece(claves[0]))
+	require.False(t, dic.Pertenece(claves[0]))
+	dic.Guardar(claves[0], valores[0])
+	dic.Guardar(claves[1], valores[1])
+	dic.Guardar(claves[2], valores[2])
+
+	err := new(errores.ErrorNoEncontrado)
+
+	require.True(t, dic.Pertenece(claves[2]))
+	require.EqualValues(t, valores[2], dic.Borrar(claves[2]))
+	require.PanicsWithValue(t, err.Error(), func() { dic.Borrar(claves[2]) })
+	require.EqualValues(t, 2, dic.Cantidad())
+	require.False(t, dic.Pertenece(claves[2]))
+
+	require.True(t, dic.Pertenece(claves[0]))
+	require.EqualValues(t, valores[0], dic.Borrar(claves[0]))
+	require.PanicsWithValue(t, err.Error(), func() { dic.Borrar(claves[0]) })
+	require.EqualValues(t, 1, dic.Cantidad())
+	require.False(t, dic.Pertenece(claves[0]))
+	require.PanicsWithValue(t, err.Error(), func() { dic.Obtener(claves[0]) })
+
+	require.True(t, dic.Pertenece(claves[1]))
+	require.EqualValues(t, valores[1], dic.Borrar(claves[1]))
+	require.PanicsWithValue(t, err.Error(), func() { dic.Borrar(claves[1]) })
+	require.EqualValues(t, 0, dic.Cantidad())
+	require.False(t, dic.Pertenece(claves[1]))
+	require.PanicsWithValue(t, err.Error(), func() { dic.Obtener(claves[1]) })
+}
+
+func TestConClavesNumericas(t *testing.T) {
+	t.Log("Valida que no solo funcione con strings")
+	dic := TDAdic.CrearABB[int, string](func(x, y int) int {
+		if x < y {
+			return -1
+		} else if x > y {
+			return 1
+		}
+		return 0
+	})
+	clave1 := 2
+	clave2 := 1
+	clave3 := 3
+	valor1 := "Gatito"
+	valor2 := "Perrito"
+	valor3 := "Pecesito"
+
+	dic.Guardar(clave1, valor1)
+	dic.Guardar(clave2, valor2)
+	dic.Guardar(clave3, valor3)
+	require.EqualValues(t, 3, dic.Cantidad())
+	require.True(t, dic.Pertenece(clave1) && dic.Pertenece(clave2) && dic.Pertenece(clave3))
+	require.EqualValues(t, valor1, dic.Obtener(clave1))
+	require.EqualValues(t, valor2, dic.Obtener(clave2))
+	require.EqualValues(t, valor3, dic.Obtener(clave3))
+	require.EqualValues(t, valor1, dic.Borrar(clave1))
+	require.False(t, dic.Pertenece(clave1))
+
+	// Checkeamos que despues de borrar la raiz el arbol quedo como se supone.
+	i := clave2 // = 1
+	dic.Iterar(func(clave int, valor string) bool {
+		require.EqualValues(t, i, clave)
+		i += 2 // = 3
+		return true
+	})
+}
+
 func TestIter(t *testing.T) {
-	t.Log("Guarda un par de claves, y luego vuelve a guardar, buscando que el dato se haya reemplazado")
+	t.Log("Test con iterador interno sin rango")
 	dic := TDAdic.CrearABB[string, int](strings.Compare)
 	dic.Guardar("D", 4)
 	dic.Guardar("C", 3)
@@ -106,17 +185,82 @@ func TestIter(t *testing.T) {
 	dic.Guardar("E", 5)
 	dic.Guardar("G", 7)
 	dic.Guardar("A", 1)
+
+	// Iterar hasta el final
+	const valorUltimaClave = 7
+	i := 1
 	dic.Iterar(func(clave string, dato int) bool {
-		if strings.Compare(clave, "E") > 0 {
-			return false
-		}
-		fmt.Println(clave, dato)
+		require.EqualValues(t, i, dato)
+		i++
 		return true
 	})
+	require.EqualValues(t, valorUltimaClave+1, i)
+
+	// Iterar hasta Condicion
+	const valorUltimaClaveVista = 5
+	i = 1
+	dic.Iterar(func(clave string, dato int) bool {
+		if strings.Compare(clave, "F") >= 0 {
+			return false
+		}
+		require.EqualValues(t, i, dato)
+		i++
+		return true
+	})
+	require.EqualValues(t, valorUltimaClaveVista+1, i)
 }
 
 func TestIterRango(t *testing.T) {
-	//todo agregar require y las boludeses esas xD
+	t.Log("Test de iterador interno con rango")
+	dic := TDAdic.CrearABB[string, int](strings.Compare)
+	dic.Guardar("D", 4)
+	dic.Guardar("C", 3)
+	dic.Guardar("B", 2)
+	dic.Guardar("F", 6)
+	dic.Guardar("E", 5)
+	dic.Guardar("G", 7)
+	dic.Guardar("A", 1)
+
+	var (
+		desde = "B"
+		hasta = "F"
+	)
+
+	// Tod0 el rango
+	const valorDelHasta = 6
+	i := 2 // Inicializado <i> en el valor de la clave <desde>
+	dic.IterarRango(&desde, &hasta, func(clave string, dato int) bool {
+		require.EqualValues(t, i, dato)
+		i++
+		return true
+	})
+	require.EqualValues(t, valorDelHasta+1, i)
+
+	// Iterar rango hasta condicion
+	const valorUltimoVisto = 4
+	i = 2
+	dic.IterarRango(&desde, &hasta, func(clave string, dato int) bool {
+		if strings.Compare(clave, "E") >= 0 {
+			return false
+		}
+		require.EqualValues(t, i, dato)
+		i++
+		return true
+	})
+	require.EqualValues(t, valorUltimoVisto+1, i)
+
+	// Iterar sin rango
+	const valorUltimo = 7
+	i = 1
+	dic.IterarRango(nil, nil, func(clave string, dato int) bool {
+		require.EqualValues(t, i, dato)
+		i++
+		return true
+	})
+	require.EqualValues(t, valorUltimo+1, i)
+}
+
+func TestIterador(t *testing.T) {
 	t.Log("Guarda un par de claves, y luego vuelve a guardar, buscando que el dato se haya reemplazado")
 	dic := TDAdic.CrearABB[string, int](strings.Compare)
 	dic.Guardar("D", 4)
@@ -126,93 +270,49 @@ func TestIterRango(t *testing.T) {
 	dic.Guardar("E", 5)
 	dic.Guardar("G", 7)
 	dic.Guardar("A", 1)
-	var desde = "B"
-	var hasta = "F"
 
-	dic.IterarRango(&desde, &hasta, func(clave string, dato int) bool {
-		fmt.Println(clave, dato)
-		return true
-	})
+	iter := dic.Iterador()
+	letras := []string{"A", "B", "C", "D", "E", "F", "G"}
 
-	dic.IterarRango(&desde, &hasta, func(clave string, dato int) bool {
-		if strings.Compare(clave, "E") > 0 {
-			return false
-		}
-		fmt.Println(clave, dato)
-		return true
-	})
+	for i, letra := range letras {
+		clave, dato := iter.VerActual()
+		require.EqualValues(t, letra, clave)
+		require.EqualValues(t, i+1, dato)
+		require.True(t, iter.HaySiguiente())
+		require.EqualValues(t, letra, iter.Siguiente())
+	}
+	require.False(t, iter.HaySiguiente())
+	require.PanicsWithValue(t, errores.ErrorIterTermino{}.Error(), func() { iter.Siguiente() })
+
 }
 
-//
-//func TestDiccionarioBorrar(t *testing.T) {
-//	t.Log("Guarda algunos pocos elementos en el diccionario, y se los borra, revisando que en todo momento " +
-//		"el diccionario se comporte de manera adecuada")
-//	clave1 := "Gato"
-//	clave2 := "Perro"
-//	clave3 := "Vaca"
-//	valor1 := "miau"
-//	valor2 := "guau"
-//	valor3 := "moo"
-//	claves := []string{clave1, clave2, clave3}
-//	valores := []string{valor1, valor2, valor3}
-//	dic := dic.CrearHash[string, string]()
-//
-//	require.False(t, dic.Pertenece(claves[0]))
-//	require.False(t, dic.Pertenece(claves[0]))
-//	dic.Guardar(claves[0], valores[0])
-//	dic.Guardar(claves[1], valores[1])
-//	dic.Guardar(claves[2], valores[2])
-//
-//	require.True(t, dic.Pertenece(claves[2]))
-//	require.EqualValues(t, valores[2], dic.Borrar(claves[2]))
-//	require.PanicsWithValue(t, "La clave no pertenece al diccionario", func() { dic.Borrar(claves[2]) })
-//	require.EqualValues(t, 2, dic.Cantidad())
-//	require.False(t, dic.Pertenece(claves[2]))
-//
-//	require.True(t, dic.Pertenece(claves[0]))
-//	require.EqualValues(t, valores[0], dic.Borrar(claves[0]))
-//	require.PanicsWithValue(t, "La clave no pertenece al diccionario", func() { dic.Borrar(claves[0]) })
-//	require.EqualValues(t, 1, dic.Cantidad())
-//	require.False(t, dic.Pertenece(claves[0]))
-//	require.PanicsWithValue(t, "La clave no pertenece al diccionario", func() { dic.Obtener(claves[0]) })
-//
-//	require.True(t, dic.Pertenece(claves[1]))
-//	require.EqualValues(t, valores[1], dic.Borrar(claves[1]))
-//	require.PanicsWithValue(t, "La clave no pertenece al diccionario", func() { dic.Borrar(claves[1]) })
-//	require.EqualValues(t, 0, dic.Cantidad())
-//	require.False(t, dic.Pertenece(claves[1]))
-//	require.PanicsWithValue(t, "La clave no pertenece al diccionario", func() { dic.Obtener(claves[1]) })
-//}
-//
-//func TestReutlizacionDeBorrados(t *testing.T) {
-//	t.Log("Prueba de caja blanca: revisa, para el caso que fuere un HashCerrado, que no haya problema " +
-//		"reinsertando un elemento borrado")
-//	dic := dic.CrearHash[string, string]()
-//	clave := "hola"
-//	dic.Guardar(clave, "mundo!")
-//	dic.Borrar(clave)
-//	require.EqualValues(t, 0, dic.Cantidad())
-//	require.False(t, dic.Pertenece(clave))
-//	dic.Guardar(clave, "mundooo!")
-//	require.True(t, dic.Pertenece(clave))
-//	require.EqualValues(t, 1, dic.Cantidad())
-//	require.EqualValues(t, "mundooo!", dic.Obtener(clave))
-//}
-//
-//func TestConClavesNumericas(t *testing.T) {
-//	t.Log("Valida que no solo funcione con strings")
-//	dic := dic.CrearHash[int, string]()
-//	clave := 10
-//	valor := "Gatito"
-//
-//	dic.Guardar(clave, valor)
-//	require.EqualValues(t, 1, dic.Cantidad())
-//	require.True(t, dic.Pertenece(clave))
-//	require.EqualValues(t, valor, dic.Obtener(clave))
-//	require.EqualValues(t, valor, dic.Borrar(clave))
-//	require.False(t, dic.Pertenece(clave))
-//}
-//
+func TestIteradorRango(t *testing.T) {
+	t.Log("Guarda un par de claves, y luego vuelve a guardar, buscando que el dato se haya reemplazado")
+	dic := TDAdic.CrearABB[string, int](strings.Compare)
+	dic.Guardar("D", 4)
+	dic.Guardar("C", 3)
+	dic.Guardar("B", 2)
+	dic.Guardar("F", 6)
+	dic.Guardar("E", 5)
+	dic.Guardar("G", 7)
+	dic.Guardar("A", 1)
+	var desde = "C"
+	var hasta = "F"
+	iter := dic.IteradorRango(&desde, &hasta)
+	letras := []string{"C", "D", "E", "F"}
+
+	for i, letra := range letras {
+		clave, dato := iter.VerActual()
+		require.EqualValues(t, letra, clave)
+		require.EqualValues(t, i+3, dato)
+		require.True(t, iter.HaySiguiente())
+		require.EqualValues(t, letra, iter.Siguiente())
+	}
+	require.False(t, iter.HaySiguiente())
+	require.PanicsWithValue(t, errores.ErrorIterTermino{}.Error(), func() { iter.Siguiente() })
+
+}
+
 //func TestConClavesStructs(t *testing.T) {
 //	t.Log("Valida que tambien funcione con estructuras mas complejas")
 //	type basico struct {
@@ -248,7 +348,6 @@ func TestIterRango(t *testing.T) {
 //	require.EqualValues(t, 5, dic.Borrar(a1))
 //	require.False(t, dic.Pertenece(a1))
 //	require.EqualValues(t, 2, dic.Obtener(a3))
-//
 //}
 //
 //func TestClaveVacia(t *testing.T) {
