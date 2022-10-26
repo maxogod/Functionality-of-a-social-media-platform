@@ -1,9 +1,9 @@
 package diccionario
 
 import (
-	"diccionario/errores"
-	dic "diccionario/hash"
-	"diccionario/pila"
+	"tp2/abb/errores"
+	dic "tp2/hash"
+	"tp2/pila"
 )
 
 type nodoAbb[K comparable, V any] struct {
@@ -25,6 +25,14 @@ type abb[K comparable, V any] struct {
 	raiz     *nodoAbb[K, V]
 	cantidad int
 	cmp      func(K, K) int
+}
+
+// Funcion creacion abb
+
+func CrearABB[K comparable, V any](funcionCmp func(K, K) int) DiccionarioOrdenado[K, V] {
+	a := new(abb[K, V])
+	a.cmp = funcionCmp
+	return a
 }
 
 // Primitivas del Arbol
@@ -100,18 +108,20 @@ func (a *abb[K, V]) Borrar(clave K) V {
 	if nodoBuscado.izquierdo == nil && nodoBuscado.derecho == nil {
 		// Sin hijos
 		a.borrarNodoSinHijos(nodoBuscado)
+		a.cantidad--
 	} else if nodoBuscado.izquierdo != nil && nodoBuscado.derecho != nil {
 		// 2 hijos
 		a.borrarNodoDosHijos(nodoBuscado)
+		// No se decrementa cantidad porque internamente usa esta misma func Borrar y se encarga de decrementar en 1
 	} else {
 		// 1 hijo
 		a.borrarNodoUnHijo(nodoBuscado)
+		a.cantidad--
 	}
 	return valor
 }
 
 func (a *abb[K, V]) borrarNodoSinHijos(nodoBuscado *nodoAbb[K, V]) {
-	a.cantidad--
 	if nodoBuscado.padre == nil {
 		// Caso borde raiz
 		a.raiz = nil
@@ -125,7 +135,6 @@ func (a *abb[K, V]) borrarNodoSinHijos(nodoBuscado *nodoAbb[K, V]) {
 }
 
 func (a *abb[K, V]) borrarNodoUnHijo(nodoBuscado *nodoAbb[K, V]) {
-	a.cantidad--
 	var hijo *nodoAbb[K, V]
 	if nodoBuscado.izquierdo != nil {
 		hijo = nodoBuscado.izquierdo
@@ -149,18 +158,19 @@ func (a *abb[K, V]) borrarNodoUnHijo(nodoBuscado *nodoAbb[K, V]) {
 
 func (a *abb[K, V]) borrarNodoDosHijos(nodoBuscado *nodoAbb[K, V]) {
 	//buscamos el nodo que remplaza al nodo borrado
-	nodoRemplazo := a.buscarRemplazo(nodoBuscado.izquierdo)
+	nodoRemplazo := a.buscarReemplazo(nodoBuscado.izquierdo)
 
 	clave := nodoRemplazo.clave
 	valor := a.Borrar(clave)
 	nodoBuscado.clave, nodoBuscado.valor = clave, valor
 }
 
-func (a abb[K, V]) buscarRemplazo(nodoRemplazo *nodoAbb[K, V]) *nodoAbb[K, V] {
+// buscarReemplazo busca el primer nodo que no tenga hijo derecho y lo devuelve
+func (a abb[K, V]) buscarReemplazo(nodoRemplazo *nodoAbb[K, V]) *nodoAbb[K, V] {
 	if nodoRemplazo.derecho == nil {
 		return nodoRemplazo
 	}
-	return a.buscarRemplazo(nodoRemplazo.derecho)
+	return a.buscarReemplazo(nodoRemplazo.derecho)
 }
 
 // buscarEntreNodos Busca el nodo por clave, comenzando en la raiz
@@ -211,11 +221,15 @@ func (a abb[K, V]) iterarRangoEntreNodos(nodoActual *nodoAbb[K, V], desde *K, ha
 		return
 	}
 	a.iterarRangoEntreNodos(nodoActual.izquierdo, desde, hasta, visitar)
-	if a.cmp(*desde, nodoActual.clave) <= 0 && a.cmp(*hasta, nodoActual.clave) >= 0 {
-		if !visitar(nodoActual.clave, nodoActual.valor) {
-			return
-		}
+
+	if desde == nil && a.cmp(*hasta, nodoActual.clave) >= 0 && !visitar(nodoActual.clave, nodoActual.valor) {
+		return
+	} else if hasta == nil && a.cmp(*desde, nodoActual.clave) <= 0 && !visitar(nodoActual.clave, nodoActual.valor) {
+		return
+	} else if desde != nil && hasta != nil && a.cmp(*desde, nodoActual.clave) <= 0 && a.cmp(*hasta, nodoActual.clave) >= 0 && !visitar(nodoActual.clave, nodoActual.valor) {
+		return
 	}
+
 	a.iterarRangoEntreNodos(nodoActual.derecho, desde, hasta, visitar)
 }
 
@@ -245,11 +259,16 @@ func (i *iterDic[K, V]) prellenarPila(nodoActual *nodoAbb[K, V]) {
 	}
 	if i.desde == nil && i.hasta == nil {
 		i.arbolApilado.Apilar(nodoActual)
-		i.prellenarPila(nodoActual.izquierdo)
-	} else if i.cmp(*i.desde, nodoActual.clave) <= 0 && i.cmp(*i.hasta, nodoActual.clave) >= 0 {
+	} else if i.desde == nil && i.cmp(*i.hasta, nodoActual.clave) >= 0 {
 		i.arbolApilado.Apilar(nodoActual)
-		i.prellenarPila(nodoActual.izquierdo)
+	} else if i.hasta == nil && i.cmp(*i.desde, nodoActual.clave) <= 0 {
+		i.arbolApilado.Apilar(nodoActual)
+	} else if i.desde != nil && i.hasta != nil && i.cmp(*i.desde, nodoActual.clave) <= 0 && i.cmp(*i.hasta, nodoActual.clave) >= 0 {
+		i.arbolApilado.Apilar(nodoActual)
+	} else if nodoActual.izquierdo == nil && nodoActual.derecho != nil {
+		i.prellenarPila(nodoActual.derecho)
 	}
+	i.prellenarPila(nodoActual.izquierdo)
 }
 
 func (i iterDic[K, V]) HaySiguiente() bool {
@@ -270,12 +289,4 @@ func (i iterDic[K, V]) Siguiente() K {
 	elem := i.arbolApilado.Desapilar()
 	i.prellenarPila(elem.derecho)
 	return elem.clave
-}
-
-// Funcion Creacion
-
-func CrearABB[K comparable, V any](funcionCmp func(K, K) int) DiccionarioOrdenado[K, V] {
-	a := new(abb[K, V])
-	a.cmp = funcionCmp
-	return a
 }

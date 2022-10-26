@@ -1,9 +1,8 @@
 package diccionario
 
 import (
-	"diccionario/lista"
 	"fmt"
-	"math"
+	"tp2/lista"
 )
 
 const (
@@ -23,20 +22,31 @@ type hashMap[K comparable, V any] struct {
 }
 
 type iteradorHash[K comparable, V any] struct {
-	hashEstructura []lista.Lista[hashDato[K, V]]
-	index          int
-	subListaIter   lista.IteradorLista[hashDato[K, V]]
+	hashArray    []lista.Lista[hashDato[K, V]]
+	index        int
+	subListaIter lista.IteradorLista[hashDato[K, V]]
+}
+
+// Funcion de creacion de hash
+
+func CrearHash[K comparable, V any]() Diccionario[K, V] {
+	h := new(hashMap[K, V])
+	h.hashArray = make([]lista.Lista[hashDato[K, V]], _LONGITUD_INICIAL)
+	for i := range h.hashArray {
+		h.hashArray[i] = lista.CrearListaEnlazada[hashDato[K, V]]()
+	}
+	return h
 }
 
 // Implementacion de HashMap
 
 func (h *hashMap[K, V]) Guardar(clave K, valor V) {
-	nuevoDato := &hashDato[K, V]{clave: clave, valor: valor}
-	index := convertir(clave, len(h.hashArray))
 	if h.Pertenece(clave) {
 		h.actualizar(clave, valor)
 		return
 	}
+	nuevoDato := &hashDato[K, V]{clave: clave, valor: valor}
+	index := convertir(clave, len(h.hashArray))
 	h.hashArray[index].InsertarPrimero(*nuevoDato)
 	h.longitud++
 	if h.hashArray[index].Largo() >= _REDIMENSION_AGRANDAR {
@@ -58,13 +68,9 @@ func (h *hashMap[K, V]) actualizar(clave K, valorActualizado V) {
 func (h hashMap[K, V]) Pertenece(clave K) bool {
 	index := convertir(clave, len(h.hashArray))
 	listaIndex := h.hashArray[index]
-	if listaIndex.EstaVacia() {
-		return false
-	} else {
-		for iter := listaIndex.Iterador(); iter.HaySiguiente(); iter.Siguiente() {
-			if iter.VerActual().clave == clave {
-				return true
-			}
+	for iter := listaIndex.Iterador(); iter.HaySiguiente(); iter.Siguiente() {
+		if iter.VerActual().clave == clave {
+			return true
 		}
 	}
 	return false
@@ -73,9 +79,6 @@ func (h hashMap[K, V]) Pertenece(clave K) bool {
 func (h *hashMap[K, V]) Obtener(clave K) V {
 	index := convertir(clave, len(h.hashArray))
 	subLista := h.hashArray[index]
-	if subLista.EstaVacia() {
-		panic("La clave no pertenece al diccionario")
-	}
 	for iter := subLista.Iterador(); iter.HaySiguiente(); iter.Siguiente() {
 		if iter.VerActual().clave == clave {
 			return iter.VerActual().valor
@@ -87,9 +90,6 @@ func (h *hashMap[K, V]) Obtener(clave K) V {
 func (h *hashMap[K, V]) Borrar(clave K) V {
 	index := convertir(clave, len(h.hashArray))
 	subLista := h.hashArray[index]
-	if subLista.EstaVacia() {
-		panic("La clave no pertenece al diccionario")
-	}
 	for iter := subLista.Iterador(); iter.HaySiguiente(); iter.Siguiente() {
 		if iter.VerActual().clave == clave {
 			dato := iter.Borrar()
@@ -109,12 +109,10 @@ func (h hashMap[K, V]) Cantidad() int {
 
 func (h hashMap[K, V]) Iterar(f func(clave K, valor V) bool) {
 	for _, subLista := range h.hashArray {
-		if !subLista.EstaVacia() {
-			for iter := subLista.Iterador(); iter.HaySiguiente(); iter.Siguiente() {
-				dato := iter.VerActual()
-				if !f(dato.clave, dato.valor) {
-					return
-				}
+		for iter := subLista.Iterador(); iter.HaySiguiente(); iter.Siguiente() {
+			dato := iter.VerActual()
+			if !f(dato.clave, dato.valor) {
+				return
 			}
 		}
 	}
@@ -122,14 +120,14 @@ func (h hashMap[K, V]) Iterar(f func(clave K, valor V) bool) {
 
 func (h hashMap[K, V]) Iterador() IterDiccionario[K, V] {
 	iter := new(iteradorHash[K, V])
-	iter.hashEstructura = h.hashArray
-	for iter.index < len(iter.hashEstructura) && iter.hashEstructura[iter.index].EstaVacia() {
+	iter.hashArray = h.hashArray
+	for iter.index < len(iter.hashArray) && iter.hashArray[iter.index].EstaVacia() {
 		iter.index++
 	}
-	if iter.index == len(iter.hashEstructura) {
+	if iter.index == len(iter.hashArray) {
 		iter.index = 0
 	}
-	iter.subListaIter = iter.hashEstructura[iter.index].Iterador()
+	iter.subListaIter = iter.hashArray[iter.index].Iterador()
 	return iter
 }
 
@@ -158,9 +156,9 @@ func (i iteradorHash[K, V]) HaySiguiente() bool {
 		return true
 	}
 
-	for i.hashEstructura[i.index].EstaVacia() {
+	for i.hashArray[i.index].EstaVacia() {
 		i.index++
-		if i.index == len(i.hashEstructura) {
+		if i.index == len(i.hashArray) {
 			return false
 		}
 	}
@@ -189,16 +187,7 @@ func (i *iteradorHash[K, V]) Siguiente() K {
 	panic("El iterador termino de iterar")
 }
 
-// CrearHash + funcion de hashing + Otras funciones privadas
-
-func CrearHash[K comparable, V any]() Diccionario[K, V] {
-	h := new(hashMap[K, V])
-	h.hashArray = make([]lista.Lista[hashDato[K, V]], _LONGITUD_INICIAL)
-	for i := range h.hashArray {
-		h.hashArray[i] = lista.CrearListaEnlazada[hashDato[K, V]]()
-	}
-	return h
-}
+// funcion de hashing + Otras funciones privadas
 
 func sdbmHash(data []byte, longitud int) int {
 	// documentacion: https://www.programmingalgorithms.com/algorithm/sdbm-hash/c/
@@ -212,13 +201,13 @@ func sdbmHash(data []byte, longitud int) int {
 
 func (i *iteradorHash[K, V]) proxIndexOcupado() {
 	i.index++
-	for i.index < len(i.hashEstructura) && i.hashEstructura[i.index].EstaVacia() {
+	for i.index < len(i.hashArray) && i.hashArray[i.index].EstaVacia() {
 		i.index++
 	}
-	if i.index == len(i.hashEstructura) {
+	if i.index == len(i.hashArray) {
 		i.subListaIter = nil
 	} else {
-		i.subListaIter = i.hashEstructura[i.index].Iterador()
+		i.subListaIter = i.hashArray[i.index].Iterador()
 	}
 }
 
@@ -239,18 +228,10 @@ func esPrimo(n int) bool {
 	if n <= 1 {
 		return false
 	}
-	if n <= 3 {
-		return true
-	}
-	if n%2 == 0 || n%3 == 0 {
-		return false
-	}
-	i := 5
-	for i < int(math.Sqrt(float64(n))+1) {
-		if n%i == 0 || n%(i+2) == 0 {
+	for i := 2; i < n; i++ {
+		if n%i == 0 {
 			return false
 		}
-		i += 6
 	}
 	return true
 }
@@ -269,33 +250,3 @@ func proxPrimo(n int) int {
 	}
 	return primo
 }
-
-/*
-		    .  ."|
-   /| /  |  _.----._
-  . |/  |.-"        ".  /|
- /                    \/ |__
-|           _.-"""/        /
-|       _.-"     /."|     /
- ".__.-"         "  |     \
-    |              |       |
-    /_      _.._   | ___  /
-  ."  ""-.-"    ". |/.-.\/
- |    0  |    0  |     / |
- \      /\_     _/    "_/
-  "._ _/   "---"       |
-  /"""                 |
-  \__.--                |_
-    )          .        | ".
-   /        _.-"\        |  ".
-  /     _.-"             |    ".
- (_ _.-|                  |     |"-._.
-   "    "--.             .J     _.-'
-           /\        _.-" | _.-'
-          /  \__..--"   _.-'
-         /   |      _.-'
-        /| /\|  _.-'
-       / |/ _.-'
-      /|_.-'
-    _.-'
-*/
