@@ -5,10 +5,17 @@ import (
 	"strings"
 	"testing"
 	TDAheap "tp2/heap"
+	"tp2/heap/errores"
 )
 
-func TestABBVacio(t *testing.T) {
+func TestHeapVacio(t *testing.T) {
 	h := TDAheap.CrearHeap(strings.Compare)
-	h.Cantidad()
-	require.True(t, true)
+	require.EqualValues(t, 0, h.Cantidad())
+	require.True(t, h.EstaVacia())
+	require.PanicsWithValue(t, errores.ErrorColaVacia{}.Error(), func() {
+		h.Desencolar()
+	})
+	require.PanicsWithValue(t, errores.ErrorColaVacia{}.Error(), func() {
+		h.VerMax()
+	})
 }
