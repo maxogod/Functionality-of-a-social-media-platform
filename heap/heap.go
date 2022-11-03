@@ -1,9 +1,9 @@
 package cola_prioridad
 
-import "tp2/heap/errores"
+import "TP2/heap/errores"
 
 const (
-	_LARGO_MINIMO       = 10
+	_LARGO_MINIMO       = 20
 	_CUADRIPLICADOR     = 4
 	_FACTOR_REDIMENSION = 2
 )
@@ -18,13 +18,14 @@ type heap[T comparable] struct {
 
 func CrearHeap[T comparable](funcionCmp func(T, T) int) ColaPrioridad[T] {
 	h := new(heap[T])
-	h.datos = make([]T, 20)
+	h.datos = make([]T, _LARGO_MINIMO)
 	h.cmp = funcionCmp
 	return h
 }
 
 func CrearHeapArr[T comparable](arreglo []T, funcionCmp func(T, T) int) ColaPrioridad[T] {
 	h := new(heap[T])
+	h.datos = make([]T, len(arreglo)*2)
 	copy(h.datos, arreglo)
 	h.cantidad = len(arreglo)
 	h.cmp = funcionCmp
@@ -39,8 +40,8 @@ func (h heap[T]) EstaVacia() bool {
 }
 
 func (h *heap[T]) Encolar(valor T) {
-	h.cantidad++
 	h.datos[h.cantidad] = valor
+	h.cantidad++
 	downHeap(h.datos, h.cmp, h.cantidad, h.cantidad-1)
 	if h.cantidad == len(h.datos) {
 		h.redimencionar(len(h.datos) * _FACTOR_REDIMENSION)

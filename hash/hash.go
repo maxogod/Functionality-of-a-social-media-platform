@@ -1,8 +1,8 @@
 package diccionario
 
 import (
+	"TP2/lista"
 	"fmt"
-	"tp2/lista"
 )
 
 const (

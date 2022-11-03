@@ -1,9 +1,9 @@
 package diccionario
 
 import (
-	"tp2/abb/errores"
-	dic "tp2/hash"
-	"tp2/pila"
+	"TP2/abb/errores"
+	dic "TP2/hash"
+	"TP2/pila"
 )
 
 type nodoAbb[K comparable, V any] struct {

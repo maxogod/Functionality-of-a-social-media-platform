@@ -1,12 +1,12 @@
 package diccionario_test
 
 import (
+	TDAdic "TP2/abb"
+	"TP2/abb/errores"
 	"github.com/stretchr/testify/require"
 	"math/rand"
 	"strings"
 	"testing"
-	TDAdic "tp2/abb"
-	"tp2/abb/errores"
 )
 
 func TestABBVacio(t *testing.T) {
