@@ -1,6 +1,6 @@
 package cola_prioridad
 
-import "TP2/heap/errores"
+import "cola_prioridad/errores"
 
 const (
 	_LARGO_MINIMO       = 20
@@ -25,7 +25,11 @@ func CrearHeap[T comparable](funcionCmp func(T, T) int) ColaPrioridad[T] {
 
 func CrearHeapArr[T comparable](arreglo []T, funcionCmp func(T, T) int) ColaPrioridad[T] {
 	h := new(heap[T])
-	h.datos = make([]T, len(arreglo)*2)
+	tamanio := len(arreglo) * 2
+	if tamanio == 0 {
+		tamanio = _LARGO_MINIMO
+	}
+	h.datos = make([]T, tamanio)
 	copy(h.datos, arreglo)
 	h.cantidad = len(arreglo)
 	h.cmp = funcionCmp
@@ -90,12 +94,13 @@ func HeapSort[T comparable](elementos []T, funcionCmp func(T, T) int) {
 }
 
 func downHeap[T comparable](datos []T, cmp func(T, T) int, cantidad, posAEvaluar int) {
-	if posAEvaluar < 0 || cantidad <= 0 {
+	if posAEvaluar < 0 {
 		return
 	}
 	izq := 2*posAEvaluar + 1
 	der := 2*posAEvaluar + 2
 	maxPos := max[T](datos, cmp, cantidad, posAEvaluar, der, izq)
+
 	if maxPos != posAEvaluar {
 		datos[maxPos], datos[posAEvaluar] = datos[posAEvaluar], datos[maxPos]
 		downHeap(datos, cmp, cantidad, maxPos)

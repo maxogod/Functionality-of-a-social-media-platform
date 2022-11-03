@@ -1,8 +1,8 @@
 package cola_prioridad_test
 
 import (
-	TDAheap "TP2/heap"
-	"TP2/heap/errores"
+	TDAheap "cola_prioridad"
+	"cola_prioridad/errores"
 	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
@@ -67,6 +67,17 @@ func TestCrearHeapDesdeArray(t *testing.T) {
 	require.True(t, h.EstaVacia())
 }
 
+func TestCrearHeapDesdeArrayVacio(t *testing.T) {
+	t.Log("Creamos un Heap con un array vacio")
+	letras := []string{}
+	h := TDAheap.CrearHeapArr[string](letras, strings.Compare)
+	h.Encolar("e")
+	h.Encolar("f")
+	require.EqualValues(t, "f", h.Desencolar())
+	require.EqualValues(t, "e", h.Desencolar())
+	require.True(t, h.EstaVacia())
+}
+
 func TestVolumen(t *testing.T) {
 	t.Log("Prueba con un gran volumen de datos")
 	const _VOLUMEN = 10000
@@ -84,6 +95,31 @@ func TestVolumen(t *testing.T) {
 	}
 	require.EqualValues(t, _VOLUMEN, h.VerMax())
 	for i := _VOLUMEN; i >= 0; i-- {
+		require.EqualValues(t, i, h.Desencolar())
+		require.EqualValues(t, i, h.Cantidad())
+	}
+	require.EqualValues(t, 0, h.Cantidad())
+	require.True(t, h.EstaVacia())
+}
+
+func TestVolumenDesdeArray(t *testing.T) {
+	t.Log("Prueba con un gran volumen de datos desde un arreglo muy grande")
+	const _VOLUMEN = 1000
+	arrayGrande := make([]int, _VOLUMEN)
+	for i := 0; i < _VOLUMEN; i++ {
+		arrayGrande[i] = i
+	}
+	h := TDAheap.CrearHeapArr[int](arrayGrande, func(x, y int) int {
+		if x > y {
+			return 1
+		} else if x < y {
+			return -1
+		}
+		return 0
+	})
+
+	require.EqualValues(t, _VOLUMEN-1, h.VerMax())
+	for i := _VOLUMEN - 1; i >= 0; i-- {
 		require.EqualValues(t, i, h.Desencolar())
 		require.EqualValues(t, i, h.Cantidad())
 	}
