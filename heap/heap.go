@@ -1,6 +1,6 @@
 package cola_prioridad
 
-import "cola_prioridad/errores"
+import "tp2/heap/errores"
 
 const (
 	_LARGO_MINIMO       = 20
@@ -97,15 +97,20 @@ func downHeap[T comparable](datos []T, cmp func(T, T) int, cantidad, posAEvaluar
 	if posAEvaluar < 0 {
 		return
 	}
+
 	izq := 2*posAEvaluar + 1
 	der := 2*posAEvaluar + 2
 	maxPos := max[T](datos, cmp, cantidad, posAEvaluar, der, izq)
 
 	if maxPos != posAEvaluar {
 		datos[maxPos], datos[posAEvaluar] = datos[posAEvaluar], datos[maxPos]
+		downHeap(datos, cmp, cantidad, posAEvaluar)
 		downHeap(datos, cmp, cantidad, maxPos)
 	}
-	downHeap(datos, cmp, cantidad, maxPos-1)
+	padre := (maxPos - 1) / 2
+	if maxPos != 0 && cmp(datos[padre], datos[maxPos]) < 0 {
+		downHeap(datos, cmp, cantidad, padre)
+	}
 }
 
 func heapify[T comparable](datos []T, cmp func(T, T) int, cantidad int) {

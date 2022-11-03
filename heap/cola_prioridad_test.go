@@ -1,11 +1,11 @@
 package cola_prioridad_test
 
 import (
-	TDAheap "cola_prioridad"
-	"cola_prioridad/errores"
 	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
+	TDAheap "tp2/heap"
+	"tp2/heap/errores"
 )
 
 func TestHeapVacio(t *testing.T) {
@@ -143,10 +143,8 @@ func TestBorde(t *testing.T) {
 		require.EqualValues(t, i+1, h.Cantidad())
 	}
 
-	for i := 0; i < 100; i++ {
-		h.Encolar(101)
-		require.EqualValues(t, 101, h.Desencolar())
-	}
+	h.Encolar(101)
+	require.EqualValues(t, 101, h.Desencolar())
 
 	for i := _MUCHOS; i >= 0; i-- {
 		require.EqualValues(t, i, h.Desencolar())
