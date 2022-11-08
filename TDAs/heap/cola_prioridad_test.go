@@ -1,11 +1,11 @@
 package cola_prioridad_test
 
 import (
+	TDAheap "algogram/TDAs/heap"
+	"algogram/TDAs/heap/errores"
 	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
-	TDAheap "tp2/heap"
-	"tp2/heap/errores"
 )
 
 func TestHeapVacio(t *testing.T) {

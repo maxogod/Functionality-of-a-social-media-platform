@@ -1,6 +1,8 @@
 package cola_prioridad
 
-import "tp2/heap/errores"
+import (
+	"algogram/TDAs/heap/errores"
+)
 
 const (
 	_LARGO_MINIMO       = 20
