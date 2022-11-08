@@ -29,3 +29,21 @@ type errorVerLike struct{}
 func (errorVerLike) Error() string {
 	return "Error: Post inexistente o sin likes"
 }
+
+type errorVerPost struct{}
+
+func (errorVerPost) Error() string {
+	return "Usuario no loggeado o no hay mas posts para ver"
+}
+
+type errorLecturaArchivos struct{}
+
+func (errorLecturaArchivos) Error() string {
+	return "Error: Lectura de archivos"
+}
+
+type errorParametros struct{}
+
+func (errorParametros) Error() string {
+	return "Error: Faltan parámetros"
+}
