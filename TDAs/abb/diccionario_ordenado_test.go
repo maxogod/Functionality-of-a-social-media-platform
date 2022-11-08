@@ -2,7 +2,7 @@ package diccionario_test
 
 import (
 	TDAdic "algogram/TDAs/abb"
-	"algogram/TDAs/abb/errores"
+	errores "algogram/TDAs/abb/erroresAbb"
 	"github.com/stretchr/testify/require"
 	"math/rand"
 	"strings"

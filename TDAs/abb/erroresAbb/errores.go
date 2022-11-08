@@ -1,4 +1,4 @@
-package errores
+package erroresAbb
 
 type ErrorNoEncontrado struct{}
 

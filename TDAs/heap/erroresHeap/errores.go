@@ -1,4 +1,4 @@
-package errores
+package erroresHeap
 
 type ErrorColaVacia struct{}
 

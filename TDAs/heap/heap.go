@@ -1,7 +1,7 @@
 package cola_prioridad
 
 import (
-	"algogram/TDAs/heap/errores"
+	errores "algogram/TDAs/heap/erroresHeap"
 )
 
 const (

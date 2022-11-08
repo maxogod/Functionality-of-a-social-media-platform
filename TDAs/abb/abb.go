@@ -1,7 +1,7 @@
 package diccionario
 
 import (
-	"algogram/TDAs/abb/errores"
+	errores "algogram/TDAs/abb/erroresAbb"
 	dic "algogram/TDAs/hash"
 	"algogram/TDAs/pila"
 )

@@ -2,7 +2,7 @@ package cola_prioridad_test
 
 import (
 	TDAheap "algogram/TDAs/heap"
-	"algogram/TDAs/heap/errores"
+	errores "algogram/TDAs/heap/erroresHeap"
 	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
