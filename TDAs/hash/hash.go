@@ -1,7 +1,7 @@
 package diccionario
 
 import (
-	"TP2/lista"
+	"algogram/TDAs/lista"
 	"fmt"
 )
 

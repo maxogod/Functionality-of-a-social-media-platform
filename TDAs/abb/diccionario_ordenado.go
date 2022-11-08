@@ -1,6 +1,6 @@
 package diccionario
 
-import dic "TP2/hash"
+import dic "algogram/TDAs/hash"
 
 type DiccionarioOrdenado[K comparable, V any] interface {
 	dic.Diccionario[K, V]
