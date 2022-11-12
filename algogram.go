@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-var ARCHIVOS = os.Args[1:]
+var ARCHIVO_USUARIOS = os.Args[1]
 
 func main() {
 	// TODO procesar archivos
