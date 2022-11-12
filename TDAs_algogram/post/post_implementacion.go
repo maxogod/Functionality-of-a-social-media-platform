@@ -21,7 +21,7 @@ func (p post) LikearPost(usuarioNombre string) string {
 	return "Post likeado"
 }
 
-func (p post) DevolverPosteador() usuario.Usuario {
+func (p post) ObtenerPoster() usuario.Usuario {
 	return p.usuarioPosteador
 }
 

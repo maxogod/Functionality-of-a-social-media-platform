@@ -10,4 +10,7 @@ type Usuario interface {
 
 	// AgregarPostFeed agrega el post pasado por parametro a la feed de el usuario
 	AgregarPostFeed(post post.Post)
+
+	// ObtenerNombre devuelve el nombre del usuario
+	ObtenerNombre() string
 }
