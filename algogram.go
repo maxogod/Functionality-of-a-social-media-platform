@@ -3,9 +3,9 @@ package main
 import (
 	diccionario "algogram/TDAs/hash"
 	"algogram/TDAs_algogram/post"
-	"algogram/TDAs_algogram/procesar_archivos"
 	"algogram/TDAs_algogram/usuario"
 	"algogram/errores"
+	"algogram/procesar_archivos"
 	"bufio"
 	"fmt"
 	"os"
