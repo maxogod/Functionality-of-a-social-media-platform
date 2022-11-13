@@ -9,6 +9,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -74,7 +75,17 @@ func main() {
 			}
 
 		case "likear_post":
+			postId, _ := strconv.Atoi(entrada[1])
+			if logueado != nil && posts.Pertenece(postId) {
+				postActual := posts.Obtener(postId)
+				postActual.LikearPost(logueado.ObtenerNombre())
+			} else {
+				fmt.Println(errores.ErrorDarLike{})
+			}
 		case "mostrar_likes":
+			postId, _ := strconv.Atoi(entrada[1])
+			fmt.Println(posts.Obtener(postId).MostrarLikes())
+
 		default:
 			fmt.Println(new(errores.ErrorParametros))
 		}
