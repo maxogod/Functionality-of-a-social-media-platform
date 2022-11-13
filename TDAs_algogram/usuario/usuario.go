@@ -13,4 +13,7 @@ type Usuario interface {
 
 	// ObtenerNombre devuelve el nombre del usuario
 	ObtenerNombre() string
+
+	// ObtenerId devuelve el id del usuario
+	ObtenerId() int
 }

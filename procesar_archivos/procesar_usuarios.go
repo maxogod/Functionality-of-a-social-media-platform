@@ -18,9 +18,9 @@ func ObtenerTodosUsuarios(args []string, usuariosHash diccionario.Diccionario[st
 	}
 	defer archivo.Close()
 	s := bufio.NewScanner(archivo)
-	for s.Scan() {
+	for i := 0; s.Scan(); i++ {
 		usuarioNombre := s.Text()
-		nuevoUsuario := usuario.CrearUsuario(usuarioNombre)
+		nuevoUsuario := usuario.CrearUsuario(usuarioNombre, i)
 		usuariosHash.Guardar(usuarioNombre, nuevoUsuario)
 	}
 	return nil
