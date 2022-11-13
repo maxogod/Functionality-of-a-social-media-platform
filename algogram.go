@@ -5,7 +5,7 @@ import (
 	"algogram/TDAs_algogram/post"
 	"algogram/TDAs_algogram/usuario"
 	"algogram/errores"
-	"algogram/procesar_archivos"
+	"algogram/procesar_datos"
 	"bufio"
 	"fmt"
 	"os"
@@ -20,7 +20,7 @@ func main() {
 		posts                    = diccionario.CrearHash[int, post.Post]()
 		logueado usuario.Usuario = nil
 	)
-	errDeProcesamiento := procesar_archivos.ObtenerTodosUsuarios(ARGS, usuarios)
+	errDeProcesamiento := procesar_datos.ObtenerTodosUsuarios(ARGS, usuarios)
 	if errDeProcesamiento != nil {
 		fmt.Println(errDeProcesamiento)
 		return
@@ -51,6 +51,15 @@ func main() {
 			}
 
 		case "publicar":
+			if logueado != nil {
+				mensaje := strings.Join(entrada[1:], " ")
+				nuevoPost := post.CrearPost(posts.Cantidad(), mensaje, logueado)
+				posts.Guardar(posts.Cantidad(), nuevoPost)
+				procesar_datos.GuardarPostEnFeeds(nuevoPost, usuarios)
+				fmt.Println("Post publicado")
+			} else {
+				fmt.Println(errores.ErrorSinUsuarioLogueado{})
+			}
 
 		case "ver_siguiente_feed":
 			if logueado != nil {
