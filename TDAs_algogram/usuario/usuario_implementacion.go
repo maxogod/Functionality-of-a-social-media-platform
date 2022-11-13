@@ -45,8 +45,8 @@ func (u *usuario) ObtenerId() int {
 
 // afinidad es una funcion de comparacion basada en afinidad de usuarios
 func (u *usuario) afinidad(post1, post2 post.Post) int {
-	x := int(math.Abs(float64(u.id) - float64(post1.ObtenerPoster().ObtenerId())))
-	y := int(math.Abs(float64(u.id) - float64(post2.ObtenerPoster().ObtenerId())))
+	x := int(math.Abs(float64(u.id) - float64(post1.ObtenerPosterID())))
+	y := int(math.Abs(float64(u.id) - float64(post2.ObtenerPosterID())))
 	if x > y {
 		return 1
 	} else if x < y {

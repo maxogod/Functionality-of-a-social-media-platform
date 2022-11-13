@@ -54,7 +54,7 @@ func main() {
 		case "publicar":
 			if logueado != nil {
 				mensaje := strings.Join(entrada[1:], " ")
-				nuevoPost := post.CrearPost(posts.Cantidad(), mensaje, logueado)
+				nuevoPost := post.CrearPost(posts.Cantidad(), mensaje, logueado.ObtenerId())
 				posts.Guardar(posts.Cantidad(), nuevoPost)
 				procesar_datos.GuardarPostEnFeeds(nuevoPost, usuarios)
 				fmt.Println("Post publicado")

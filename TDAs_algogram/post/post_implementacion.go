@@ -2,16 +2,15 @@ package post
 
 import (
 	TDAdic "algogram/TDAs/abb"
-	"algogram/TDAs_algogram/usuario"
 	"fmt"
 	"strings"
 )
 
 type post struct {
-	descripcion      string
-	likes            TDAdic.DiccionarioOrdenado[string, string]
-	usuarioPosteador usuario.Usuario
-	id               int
+	descripcion        string
+	likes              TDAdic.DiccionarioOrdenado[string, string]
+	idUsuarioPosteador int
+	id                 int
 }
 
 func (p post) LikearPost(usuarioNombre string) string {
@@ -21,8 +20,8 @@ func (p post) LikearPost(usuarioNombre string) string {
 	return "Post likeado"
 }
 
-func (p post) ObtenerPoster() usuario.Usuario {
-	return p.usuarioPosteador
+func (p post) ObtenerPosterID() int {
+	return p.idUsuarioPosteador
 }
 
 func (p post) MostrarLikes() string {
@@ -38,11 +37,11 @@ func (p post) MostrarPost() string {
 	return fmt.Sprintf("Post ID %d\n%s\nLikes: %d", p.id, p.descripcion, p.likes.Cantidad())
 }
 
-func CrearPost(id int, descripcion string, usuarioPosteador usuario.Usuario) Post {
+func CrearPost(id int, descripcion string, idUsuarioPosteador int) Post {
 	p := new(post)
 	p.descripcion = descripcion
 	p.likes = TDAdic.CrearABB[string, string](strings.Compare)
-	p.usuarioPosteador = usuarioPosteador
+	p.idUsuarioPosteador = idUsuarioPosteador
 	p.id = id
 	return p
 }
