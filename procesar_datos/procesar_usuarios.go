@@ -1,4 +1,4 @@
-package procesar_archivos
+package procesar_datos
 
 import (
 	diccionario "algogram/TDAs/hash"
