@@ -4,19 +4,21 @@ import (
 	hp "algogram/TDAs/heap"
 	"algogram/TDAs_algogram/post"
 	"algogram/errores"
-	"strings"
+	"math"
 )
 
 type usuario struct {
 	feed   hp.ColaPrioridad[post.Post]
 	nombre string
+	id     int
 }
 
 // CrearUsuario Funcion de creacion de un usuario
-func CrearUsuario(nombre string) Usuario {
+func CrearUsuario(nombre string, id int) Usuario {
 	usuarioCreado := new(usuario)
-	usuarioCreado.feed = hp.CrearHeap[post.Post](cmp)
+	usuarioCreado.feed = hp.CrearHeap[post.Post](usuarioCreado.afinidad)
 	usuarioCreado.nombre = nombre
+	usuarioCreado.id = id
 	return usuarioCreado
 }
 
@@ -37,13 +39,19 @@ func (u *usuario) ObtenerNombre() string {
 	return u.nombre
 }
 
+func (u *usuario) ObtenerId() int {
+	return u.id
+}
+
 // Funciones adicionales abajo
 
-// cmp Funcion de comparacion basada en afinidad de usuarios
-func cmp(post1, post2 post.Post) int {
-	if strings.Compare(post1.ObtenerPoster().ObtenerNombre(), post2.ObtenerPoster().ObtenerNombre()) > 1 {
+// afinidad es una funcion de comparacion basada en afinidad de usuarios
+func (u *usuario) afinidad(post1, post2 post.Post) int {
+	x := int(math.Abs(float64(u.id) - float64(post1.ObtenerPoster().ObtenerId())))
+	y := int(math.Abs(float64(u.id) - float64(post2.ObtenerPoster().ObtenerId())))
+	if x > y {
 		return 1
-	} else if strings.Compare(post1.ObtenerPoster().ObtenerNombre(), post2.ObtenerPoster().ObtenerNombre()) < 1 {
+	} else if x < y {
 		return -1
 	}
 	return 0
