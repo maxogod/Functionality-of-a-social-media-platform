@@ -9,7 +9,9 @@ import (
 func GuardarPostEnFeeds(nuevoPost post.Post, usuarios diccionario.Diccionario[string, usuario.Usuario]) {
 	usuarios.Iterar(
 		func(K string, V usuario.Usuario) bool {
-			V.AgregarPostFeed(nuevoPost)
+			if nuevoPost.ObtenerPosterID() != V.ObtenerId() {
+				V.AgregarPostFeed(nuevoPost)
+			}
 			return true
 		})
 }
