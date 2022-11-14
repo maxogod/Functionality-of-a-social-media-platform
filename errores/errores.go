@@ -1,49 +1,49 @@
 package errores
 
-type errorLogin struct{}
+type ErrorLogin struct{}
 
-func (errorLogin) Error() string {
+func (ErrorLogin) Error() string {
 	return "Error: Ya habia un usuario loggeado"
 }
 
-type errorUsuarioInvalido struct{}
+type ErrorUsuarioInvalido struct{}
 
-func (errorUsuarioInvalido) Error() string {
+func (ErrorUsuarioInvalido) Error() string {
 	return "Error: usuario no existente"
 }
 
-type errorSinUsuarioLogueado struct{}
+type ErrorSinUsuarioLogueado struct{}
 
-func (errorSinUsuarioLogueado) Error() string {
+func (ErrorSinUsuarioLogueado) Error() string {
 	return "Error: no habia usuario loggeado"
 }
 
-type errorDarLike struct{}
+type ErrorDarLike struct{}
 
-func (errorDarLike) Error() string {
+func (ErrorDarLike) Error() string {
 	return "Error: Usuario no loggeado o Post inexistente"
 }
 
-type errorVerLike struct{}
+type ErrorVerLike struct{}
 
-func (errorVerLike) Error() string {
+func (ErrorVerLike) Error() string {
 	return "Error: Post inexistente o sin likes"
 }
 
-type errorVerPost struct{}
+type ErrorVerPost struct{}
 
-func (errorVerPost) Error() string {
+func (ErrorVerPost) Error() string {
 	return "Usuario no loggeado o no hay mas posts para ver"
 }
 
-type errorLecturaArchivos struct{}
+type ErrorLecturaArchivos struct{}
 
-func (errorLecturaArchivos) Error() string {
+func (ErrorLecturaArchivos) Error() string {
 	return "Error: Lectura de archivos"
 }
 
-type errorParametros struct{}
+type ErrorParametros struct{}
 
-func (errorParametros) Error() string {
+func (ErrorParametros) Error() string {
 	return "Error: Faltan parámetros"
 }
