@@ -8,15 +8,20 @@ import (
 )
 
 type usuario struct {
-	feed   hp.ColaPrioridad[post.Post]
+	feed   hp.ColaPrioridad[postFeed]
 	nombre string
 	id     int
+}
+
+type postFeed struct {
+	idPost      int
+	idPosteador int
 }
 
 // CrearUsuario Funcion de creacion de un usuario
 func CrearUsuario(nombre string, id int) Usuario {
 	usuarioCreado := new(usuario)
-	usuarioCreado.feed = hp.CrearHeap[post.Post](usuarioCreado.afinidad)
+	usuarioCreado.feed = hp.CrearHeap[postFeed](usuarioCreado.afinidad)
 	usuarioCreado.nombre = nombre
 	usuarioCreado.id = id
 	return usuarioCreado
@@ -24,15 +29,19 @@ func CrearUsuario(nombre string, id int) Usuario {
 
 // Metodos de usuario abajo
 
-func (u *usuario) VerSigPost() (string, error) {
+func (u *usuario) VerSigPost() (int, error) {
 	if u.feed.EstaVacia() {
-		return "", errores.ErrorVerPost{}
+		return -1, errores.ErrorVerPost{}
 	}
-	return u.feed.Desencolar().MostrarPost(), nil
+	return u.feed.Desencolar().idPost, nil
 }
 
 func (u *usuario) AgregarPostFeed(post post.Post) {
-	u.feed.Encolar(post)
+	pF := new(postFeed)
+	pF.idPosteador = post.ObtenerPosterID()
+	pF.idPost = post.ObtenerPostID()
+
+	u.feed.Encolar(*pF)
 }
 
 func (u *usuario) ObtenerNombre() string {
@@ -44,9 +53,9 @@ func (u *usuario) ObtenerId() int {
 }
 
 // afinidad es una funcion de comparacion basada en afinidad de usuarios
-func (u *usuario) afinidad(post1, post2 post.Post) int {
-	x := int(math.Abs(float64(u.id) - float64(post1.ObtenerPosterID())))
-	y := int(math.Abs(float64(u.id) - float64(post2.ObtenerPosterID())))
+func (u *usuario) afinidad(post1, post2 postFeed) int {
+	x := int(math.Abs(float64(u.id) - float64(post1.idPosteador)))
+	y := int(math.Abs(float64(u.id) - float64(post2.idPosteador)))
 	if x > y {
 		return 1
 	} else if x < y {

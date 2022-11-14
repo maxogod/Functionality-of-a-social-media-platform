@@ -64,9 +64,9 @@ func main() {
 
 		case "ver_siguiente_feed":
 			if logueado != nil {
-				siguientePost, err := logueado.VerSigPost()
+				idPost, err := logueado.VerSigPost()
 				if err == nil {
-					fmt.Println(siguientePost)
+					fmt.Println(posts.Obtener(idPost).MostrarPost())
 				} else {
 					fmt.Println(err)
 				}
@@ -84,7 +84,11 @@ func main() {
 			}
 		case "mostrar_likes":
 			postId, _ := strconv.Atoi(entrada[1])
-			fmt.Println(posts.Obtener(postId).MostrarLikes())
+			if posts.Pertenece(postId) {
+				fmt.Println(posts.Obtener(postId).MostrarLikes())
+			} else {
+				fmt.Println(errores.ErrorVerLike{})
+			}
 
 		default:
 			fmt.Println(new(errores.ErrorParametros))

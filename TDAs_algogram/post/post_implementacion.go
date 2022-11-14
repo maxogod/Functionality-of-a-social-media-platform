@@ -6,39 +6,43 @@ import (
 	"strings"
 )
 
-type post struct {
+type PostImplementation struct {
 	descripcion        string
 	likes              TDAdic.DiccionarioOrdenado[string, string]
 	idUsuarioPosteador int
 	id                 int
 }
 
-func (p post) LikearPost(usuarioNombre string) string {
+func (p PostImplementation) LikearPost(usuarioNombre string) string {
 	if !p.likes.Pertenece(usuarioNombre) {
 		p.likes.Guardar(usuarioNombre, usuarioNombre)
 	}
 	return "Post likeado"
 }
 
-func (p post) ObtenerPosterID() int {
+func (p PostImplementation) ObtenerPosterID() int {
 	return p.idUsuarioPosteador
 }
 
-func (p post) MostrarLikes() string {
+func (p PostImplementation) ObtenerPostID() int {
+	return p.id
+}
+
+func (p PostImplementation) MostrarLikes() string {
 	var nombre string
 	p.likes.Iterar(func(clave string, dato string) bool {
 		nombre += fmt.Sprintf("\n%s", dato)
 		return true
 	})
-	return fmt.Sprintf("El post tiene %d likes:%s", p.likes.Cantidad())
+	return fmt.Sprintf("El PostImplementation tiene %d likes:%s", p.likes.Cantidad())
 }
 
-func (p post) MostrarPost() string {
+func (p PostImplementation) MostrarPost() string {
 	return fmt.Sprintf("Post ID %d\n%s\nLikes: %d", p.id, p.descripcion, p.likes.Cantidad())
 }
 
 func CrearPost(id int, descripcion string, idUsuarioPosteador int) Post {
-	p := new(post)
+	p := new(PostImplementation)
 	p.descripcion = descripcion
 	p.likes = TDAdic.CrearABB[string, string](strings.Compare)
 	p.idUsuarioPosteador = idUsuarioPosteador
