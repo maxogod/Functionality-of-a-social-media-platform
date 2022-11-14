@@ -6,7 +6,7 @@ type Usuario interface {
 
 	// VerSigPost devuelve el siguiente post disponible para ver de un usuario basado en la afinidad que este tenga
 	// con el poster, devuelve error si no hay nada en feed
-	VerSigPost() (string, error)
+	VerSigPost() (int, error)
 
 	// AgregarPostFeed agrega el post pasado por parametro a la feed de el usuario
 	AgregarPostFeed(post post.Post)
