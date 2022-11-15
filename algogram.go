@@ -33,7 +33,7 @@ func main() {
 
 		switch comando {
 		case "login":
-			nombreUsuario := entrada[1]
+			nombreUsuario := strings.Join(entrada[1:], " ")
 			if usuarios.Pertenece(nombreUsuario) && logueado == nil {
 				logueado = usuarios.Obtener(nombreUsuario)
 				fmt.Println(fmt.Sprintf("Hola %s", logueado.ObtenerNombre()))
@@ -79,13 +79,20 @@ func main() {
 			if logueado != nil && posts.Pertenece(postId) {
 				postActual := posts.Obtener(postId)
 				postActual.LikearPost(logueado.ObtenerNombre())
+				fmt.Println("Post likeado")
 			} else {
 				fmt.Println(errores.ErrorDarLike{})
 			}
+
 		case "mostrar_likes":
 			postId, _ := strconv.Atoi(entrada[1])
 			if posts.Pertenece(postId) {
-				fmt.Println(posts.Obtener(postId).MostrarLikes())
+				mensajeLikes, err := posts.Obtener(postId).MostrarLikes()
+				if err == nil {
+					fmt.Println(mensajeLikes)
+				} else {
+					fmt.Println(err)
+				}
 			} else {
 				fmt.Println(errores.ErrorVerLike{})
 			}

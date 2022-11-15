@@ -2,6 +2,7 @@ package post
 
 import (
 	TDAdic "algogram/TDAs/abb"
+	"algogram/errores"
 	"fmt"
 	"strings"
 )
@@ -29,13 +30,16 @@ func (p postImplementation) ObtenerPostID() int {
 	return p.id
 }
 
-func (p postImplementation) MostrarLikes() string {
+func (p postImplementation) MostrarLikes() (string, error) {
+	if p.likes.Cantidad() == 0 {
+		return "", errores.ErrorVerLike{}
+	}
 	var nombre string
 	p.likes.Iterar(func(clave string, dato string) bool {
-		nombre += fmt.Sprintf("\n%s", dato)
+		nombre += fmt.Sprintf("\n\t%s", dato)
 		return true
 	})
-	return fmt.Sprintf("El postImplementation tiene %d likes:%s", p.likes.Cantidad())
+	return fmt.Sprintf("El post tiene %d likes:%s", p.likes.Cantidad(), nombre), nil
 }
 
 func (p postImplementation) MostrarPost() string {

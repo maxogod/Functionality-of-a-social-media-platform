@@ -3,7 +3,7 @@ package post
 type Post interface {
 
 	//MostrarLikes muestra la cantidad de likes y quienes likearon el postImplementation en question
-	MostrarLikes() string
+	MostrarLikes() (string, error)
 
 	//MostrarPost muestra el postImplementation actual
 	MostrarPost() string
