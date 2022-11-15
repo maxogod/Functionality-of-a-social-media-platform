@@ -56,10 +56,17 @@ func (u *usuario) ObtenerId() int {
 func (u *usuario) afinidad(post1, post2 postFeed) int {
 	x := int(math.Abs(float64(u.id) - float64(post1.idPosteador)))
 	y := int(math.Abs(float64(u.id) - float64(post2.idPosteador)))
-	if x > y {
+	if x < y {
 		return 1
-	} else if x < y {
+	} else if x > y {
 		return -1
 	}
-	return 0
+	return afinidadPost(post1.idPost, post2.idPost)
+}
+
+func afinidadPost(postId1, postId2 int) int {
+	if postId1 < postId2 {
+		return 1
+	}
+	return -1
 }
