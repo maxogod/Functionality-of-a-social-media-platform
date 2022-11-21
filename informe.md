@@ -43,6 +43,7 @@ La “distancia” del usuarioC al usuarioA es 2, mientras tanto que la “dista
 
 3- Al momento que un usuario likea un post debemos guardar en ese post la información de quienes dieron like ordenarlos alfabéticamente con una complejidad temporal de O(log Up) siendo Up la cantidad de personas que dieron like, por lo que decidimos utilizar un árbol binario de búsqueda ya que mantendrá todo ordenado y nos permite además recorrerlo completo para mostrar los likes en tiempo lineal (recorriendo todos los likers). Para obtener rápidamente el post (y no alentar las operaciones), utilizamos un segundo hashmap, en este caso por id del post en cuestión.
 
+<hr>
 
 #### TDA Usuario
 
