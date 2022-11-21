@@ -1,5 +1,6 @@
 <h1>TP2</h1>
-<h5>Work for college</h2>
+<h5>Work for college</h5>
+<a href="https://github.com/maxogod/TP2/blob/main/Doc.md">Documentation</a>
 <p align="center">
     ~ Private Repository ~
 </p>
