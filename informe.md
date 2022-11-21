@@ -10,15 +10,16 @@ Teniendo en cuenta la consigna, decidimos crear un diagrama de flujo para poder 
 Para aclarar, no definimos nuestro TP en base a este diagrama, solo fue hecho para poder tener una idea de como realizar el trabajo práctico.
 
 A continuación dividimos el programa en un conjunto de subproblemas:
-<hr>
+
+
+
 1- Necesitamos que las operaciones de “login” y “logout” sean O(1) en complejidad temporal por lo que debemos usar algún tipo de estructura de datos, ya que no nos sirve leer el archivo de usuarios cada vez que dichas operaciones se lleven a cabo.
-
-
-
 
 2 - Necesitamos afrontar el tema de los comandos “Publicar Post” y “Ver próximo post en el feed”. Para esto, decidimos implementar 2 TDA’s distintos, uno para los usuarios y otro para los posts. Así podemos crear múltiples posts y asignarlos a distintos usuarios.
 
 3- Para llevar a cabo operaciones de “likear” y “mostrar likes” necesitamos guardar esa información. Para esto vamos a usar una estructura de datos que estará en memoria hasta el momento de terminación del programa (ya que no se pide que se almacenen los datos) y que nos ofrezca la complejidad temporal especificada en la consigna.
+
+<hr>
 
 ### Solución propuesta
 
