@@ -1,7 +1,7 @@
 
 <body>
     <i>
-            This documentantion was writen for <a href="[https://github.com/maxogod](https://github.com/maxogod/Front-End-Projects)" target="_blank">this little project</a>
+            This documentantion was writen for <a href="https://github.com/maxogod/Front-End-Projects" target="_blank">this little project</a>
     </i>
     <p></p>
     <nav id="navbar">
