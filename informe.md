@@ -22,7 +22,7 @@ A continuación dividimos el programa en un conjunto de subproblemas:
     <li>
       Para llevar a cabo operaciones de “likear” y “mostrar likes” necesitamos guardar esa información. Para esto vamos a usar una estructura de datos que estará en memoria hasta el momento de terminación del programa (ya que no se pide que se almacenen los datos) y que nos ofrezca la complejidad temporal especificada en la consigna.
   </li>
-<ol>
+</ol>
   
   
 <hr>
