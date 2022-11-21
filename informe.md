@@ -16,8 +16,7 @@ A continuación dividimos el programa en un conjunto de subproblemas:
   <li>
     Necesitamos que las operaciones de “login” y “logout” sean O(1) en complejidad temporal por lo que debemos usar algún tipo de estructura de datos, ya que no nos sirve leer el archivo de usuarios cada vez que dichas operaciones se lleven a cabo.
   </li>
- 
-    <li>
+   <li>
       Necesitamos afrontar el tema de los comandos “Publicar Post” y “Ver próximo post en el feed”. Para esto, decidimos implementar 2 TDA’s distintos, uno para los usuarios y otro para los posts. Así podemos crear múltiples posts y asignarlos a distintos usuarios.
   </li>
     <li>
