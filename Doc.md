@@ -32,8 +32,8 @@
         <header>~Introduction</header>
         <p>
           This documentation page is for FreeCodeCamp's responsive web design
-          curriculum; It is in English <p>even though the mentioned repository is
-          in Spanish.</p>
+          curriculum; It is in English <strong>even though the mentioned repository is
+          in Spanish.</strong>
         </p>
         <p>
           AlgoGram is basically a very basic infrastructure of a social media
