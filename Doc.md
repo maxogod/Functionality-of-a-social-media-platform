@@ -1,8 +1,8 @@
 
 <body>
-    <small>
+    <p>
             This documentantion was writen for <a href="[https://github.com/maxogod](https://github.com/maxogod/Front-End-Projects)" target="_blank">this little project</a>
-    </small>
+    </p>
     <nav id="navbar">
         <header id="navbar-header">AlgoGram Documentation</header>
         <ul>
