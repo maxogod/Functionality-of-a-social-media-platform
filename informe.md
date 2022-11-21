@@ -1,41 +1,4 @@
-  Informe TP2 - Algogram 
-   Algoritmos y Programación II - 2022
-
-Integrantes: 
-Santiago Sevitz - 42951041 - 107520
-Máximo Utrera - 45032778 - 109651
-
-Ayudante:
-Ignacio Demarchi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#  Informe Algogram 
 
 
 
