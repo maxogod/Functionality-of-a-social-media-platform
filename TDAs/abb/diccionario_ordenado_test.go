@@ -3,10 +3,11 @@ package diccionario_test
 import (
 	TDAdic "algogram/TDAs/abb"
 	errores "algogram/TDAs/abb/erroresAbb"
-	"github.com/stretchr/testify/require"
 	"math/rand"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestABBVacio(t *testing.T) {
@@ -378,6 +379,62 @@ func TestIterarDiccionarioVacio(t *testing.T) {
 	err := new(errores.ErrorIterTermino)
 	require.PanicsWithValue(t, err.Error(), func() { iter.VerActual() })
 	require.PanicsWithValue(t, err.Error(), func() { iter.Siguiente() })
+}
+
+func TestClaveNumericYIterarInterno(t *testing.T) {
+	t.Log("Test con claves numericas y pruba borde condicion de corte iter internos")
+	dic := TDAdic.CrearABB[int, int](func(x, y int) int {
+		if x > y {
+			return 1
+		} else if x < y {
+			return -1
+		} else {
+			return 0
+		}
+	})
+
+	require.EqualValues(t, 0, dic.Cantidad())
+	dic.Guardar(50, 50)
+	require.EqualValues(t, 1, dic.Cantidad())
+	cont := 1
+	for dic.Cantidad() < 100 {
+		n := rand.Intn(100)
+		if !dic.Pertenece(n) {
+			require.EqualValues(t, cont, dic.Cantidad())
+			dic.Guardar(n, n)
+			cont++
+		}
+	}
+	require.EqualValues(t, 100, dic.Cantidad())
+	require.EqualValues(t, 50, dic.Borrar(50))
+	require.EqualValues(t, 99, dic.Cantidad())
+	require.EqualValues(t, 49, dic.Borrar(49))
+	require.EqualValues(t, 98, dic.Cantidad())
+
+	var (
+		desd = 2
+		hast = 26
+	)
+
+	cont = 2
+	dic.IterarRango(&desd, &hast, func(clave, dato int) bool {
+		if clave == 16 {
+			return false
+		}
+		require.EqualValues(t, cont, clave)
+		cont++
+		return true
+	})
+
+	cont = 0
+	dic.Iterar(func(clave, dato int) bool {
+		if clave == 18 {
+			return false
+		}
+		require.EqualValues(t, cont, clave)
+		cont++
+		return true
+	})
 }
 
 func TestIterador(t *testing.T) {
