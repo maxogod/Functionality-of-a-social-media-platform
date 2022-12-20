@@ -1,4 +1,5 @@
 <h1>Functionality of a social media platform</h1>
+<h2>Project written in spanish -- Proyecto escrito en español</h2>
 <a href="https://github.com/maxogod/TP2/blob/main/informe.md">Informe Español.</a>
 
 
