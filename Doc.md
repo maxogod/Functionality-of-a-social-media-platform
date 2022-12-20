@@ -47,9 +47,7 @@
           In order to run this aplication you will need to execute the following
           command in the terminal:
         </p>
-        <code>
-          ./algogram &lt;txt file containing the users of the app&gt;
-        </code>
+        <code>./algogram &lt;txt file containing the users of the app&gt;</code>
       </section>
       <section class="main-section" id="Commands">
         <header>~Commands</header>
@@ -85,12 +83,6 @@
                 <li>Posts data type</li>
             </ul>
             both have a a fitting behavior
-        </p>
-      </section>
-      <section class="main-section" id="Reference">
-        <header>~Reference</header>
-        <p>
-            The repository is currently private but will be public soon in <a href="https://github.com/maxogod" target="_blank">this github account</a>
         </p>
       </section>
     </main>
