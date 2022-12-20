@@ -1,4 +1,4 @@
-<h1>Funcionalidad de una red social</h1>
+<h1>Functionality of a social media platform</h1>
 <a href="https://github.com/maxogod/TP2/blob/main/informe.md">Informe Español.</a>
 
 
