@@ -82,7 +82,7 @@
                 <li>Users data type</li>
                 <li>Posts data type</li>
             </ul>
-            both have a a fitting behavior
+            both have a fitting behavior
         </p>
       </section>
     </main>
